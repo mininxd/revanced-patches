@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Shared PreferenceScreen -->
-    <string name="revanced_extended_settings_title">ReVanced Extended</string>
+    <string name="revanced_extended_settings_title">ReVanced Extended
+</string>
 
     <!-- Shared Category -->
-    <string name="revanced_extended_restart_first_run">Restart to load the layout normally</string>
+    <string name="revanced_extended_restart_first_run">Revanced Extended with original icon by mininxd</string>
     <string name="revanced_extended_restart_message">Refresh and restart</string>
 
     <!-- PreferenceScreen: Account -->
