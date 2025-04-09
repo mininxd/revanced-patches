@@ -1,0 +1,34 @@
+name: Manual Build ReVanced Patches
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Grant execute permission to Gradle wrapper
+        run: chmod +x ./gradlew
+
+      - name: Build in patches/ directory
+        run: ./gradlew -p patches build
+
+      - name: Generate patch files
+        run: ./gradlew -p patches generatePatchesFiles
+
+      - name: Publish to GitHub Packages
+        run: ./gradlew -p patches publish
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
