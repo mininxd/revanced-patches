@@ -26,15 +26,15 @@ private const val ADAPTIVE_ICON_BACKGROUND_FILE_NAME =
     "adaptiveproduct_youtube_music_background_color_108"
 private const val ADAPTIVE_ICON_FOREGROUND_FILE_NAME =
     "adaptiveproduct_youtube_music_foreground_color_108"
-private const val DEFAULT_ICON = "revancify_blue"
+private const val DEFAULT_ICON = "youtube_music"
 
 private val availableIcon = mapOf(
     "AFN Blue" to "afn_blue",
     "AFN Red" to "afn_red",
     "MMT" to "mmt",
-    "Revancify Blue" to DEFAULT_ICON,
+    "Revancify Blue" to "revancify_blue",
     "Revancify Red" to "revancify_red",
-    "YouTube Music" to "youtube_music"
+    "YouTube Music" to DEFAULT_ICON
 )
 
 private val sizeArray = arrayOf(
