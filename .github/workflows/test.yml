@@ -1,4 +1,4 @@
-name: Manual Build ReVanced Patches
+name: Manual Build with Debug Info
 
 on:
   workflow_dispatch:
@@ -6,6 +6,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      GITHUB_ACTOR: ${{ github.actor }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -17,18 +21,15 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Grant execute permission to Gradle wrapper
+      - name: Make Gradle executable
         run: chmod +x ./gradlew
 
-      - name: Build in patches/ directory
-        run: ./gradlew -p patches build
+      - name: Build with stacktrace, info, and scan
+        run: ./gradlew -p patches build --stacktrace --info --scan
 
-      - name: Generate patch files
-        run: ./gradlew -p patches generatePatchesFiles
+      - name: Generate patches
+        run: ./gradlew -p patches generatePatchesFiles --stacktrace --info --scan
 
       - name: Publish to GitHub Packages
-        run: ./gradlew -p patches publish
-        env:
-          GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+        run: ./gradlew -p patches publish --stacktrace --info --scan
+        
