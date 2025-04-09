@@ -22,7 +22,27 @@ jobs:
       - name: Cache Gradle
         uses: burrunan/gradle-cache-action@v1
 
-      - name: Build
+      - name: Install tree
+        run: sudo apt-get update && sudo apt-get install -y tree
+
+      - name: Show directory tree before build
+        run: tree . || true
+
+      - name: Make Gradle Executable
+        run: chmod +x ./gradlew
+
+      - name: Build and Generate .rvp Files
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew build --no-daemon
+          GITHUB_ACTOR: ${{ github.actor }}
+        run: ./gradlew -p patches build generatePatchesFiles --no-daemon --stacktrace --info --scan
+
+      - name: Show directory tree after build
+        run: tree . || true
+
+      - name: Upload .rvp artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: revanced-patches
+          path: patches/build/generated/patches/*.rvp
+          
