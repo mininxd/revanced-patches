@@ -9,7 +9,7 @@ import app.revanced.patches.music.utils.settings.settingsPatch
 import app.revanced.util.removeStringsElements
 import app.revanced.util.valueOrThrow
 
-private const val APP_NAME_NOTIFICATION = "ReVanced Extended Music"
+private const val APP_NAME_NOTIFICATION = "YouTube Music"
 private const val APP_NAME_LAUNCHER = "YT Music"
 
 @Suppress("unused")
@@ -25,9 +25,9 @@ val customBrandingNamePatch = resourcePatch(
         key = "appNameNotification",
         default = APP_NAME_LAUNCHER,
         values = mapOf(
-            "ReVanced Extended Music" to APP_NAME_NOTIFICATION,
+            "ReVanced Extended Music" to "ReVanced Extended Music",
             "RVX Music" to "RVX Music",
-            "YouTube Music" to "YouTube Music",
+            "YouTube Music" to APP_NAME_NOTIFICATION,
             "YT Music" to APP_NAME_LAUNCHER,
         ),
         title = "App name in notification panel",
@@ -39,10 +39,10 @@ val customBrandingNamePatch = resourcePatch(
         key = "appNameLauncher",
         default = APP_NAME_LAUNCHER,
         values = mapOf(
-            "ReVanced Extended Music" to APP_NAME_NOTIFICATION,
-            "RVX Music" to APP_NAME_LAUNCHER,
-            "YouTube Music" to "YouTube Music",
-            "YT Music" to "YT Music",
+            "ReVanced Extended Music" to "ReVanced Extended Music",
+            "RVX Music" to "RVX Music",
+            "YouTube Music" to APP_NAME_NOTIFICATION,
+            "YT Music" to APP_NAME_LAUNCHER,
         ),
         title = "App name in launcher",
         description = "The name of the app as it appears in the launcher.",
