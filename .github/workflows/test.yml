@@ -38,7 +38,7 @@ jobs:
         run: |
           tree ./ || true
           mkdir -p output
-          zip -r output/javac-classes.zip extensions/shared/build/ || true
+          zip -r output/javac-classes.zip ./ || true
 
       - name: Upload javac zip artifact
         uses: actions/upload-artifact@v4
