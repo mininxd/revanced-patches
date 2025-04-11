@@ -10,6 +10,7 @@ import app.revanced.util.removeStringsElements
 import app.revanced.util.valueOrThrow
 
 private const val APP_NAME_NOTIFICATION = "YouTube Music"
+private const val APP_NAME_SETTINGS = "YouTube Music"
 private const val APP_NAME_LAUNCHER = "YT Music"
 
 @Suppress("unused")
@@ -23,7 +24,7 @@ val customBrandingNamePatch = resourcePatch(
 
     val appNameNotificationOption = stringOption(
         key = "appNameNotification",
-        default = APP_NAME_LAUNCHER,
+        default = APP_NAME_NOTIFICATION,
         values = mapOf(
             "ReVanced Extended Music" to "ReVanced Extended Music",
             "RVX Music" to "RVX Music",
@@ -48,12 +49,28 @@ val customBrandingNamePatch = resourcePatch(
         description = "The name of the app as it appears in the launcher.",
         required = true
     )
+   
+    val appNameSettingsOption = stringOption(
+        key = "appNameSettings",
+        default = APP_NAME_SETTINGS,
+        values = mapOf(
+            "ReVanced Extended Music" to "ReVanced Extended Music",
+            "RVX Music" to "RVX Music",
+            "YouTube Music" to APP_NAME_SETTINGS,
+            "YT Music" to APP_NAME_LAUNCHER,
+        ),
+        title = "App name in launcher",
+        description = "The name of the app as it appears in the launcher.",
+        required = true
+    )
 
     execute {
         // Check patch options first.
         val notificationName = appNameNotificationOption
             .valueOrThrow()
         val launcherName = appNameLauncherOption
+            .valueOrThrow()
+        val settingName = appNameSettingsOption
             .valueOrThrow()
 
         removeStringsElements(
@@ -62,7 +79,7 @@ val customBrandingNamePatch = resourcePatch(
 
         document("res/values/strings.xml").use { document ->
             mapOf(
-                "app_name" to notificationName,
+                "app_name" to settingName,
                 "app_launcher_name" to launcherName
             ).forEach { (k, v) ->
                 val stringElement = document.createElement("string")
