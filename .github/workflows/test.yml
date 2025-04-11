@@ -28,17 +28,17 @@ jobs:
       - name: Make Gradle Executable
         run: chmod +x ./gradlew
 
-      - name: Build and Generate .rvp Files
+      - name: Build and generate class file
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
-        run: ./gradlew -p patches build generatePatchesFiles --no-daemon --stacktrace --info --scan
+        run: ./gradlew -p patches build generatePatchesFiles --no-daemon
 
       - name: Zip compiled class files
         run: |
           tree ./ || true
           mkdir -p output
-          zip -r output/javac-classes.zip ./patches/src/main/kotlin/app/revanced/ || true
+          zip -r output/javac-classes.zip ./patches/build/classes/kotlin/main/app/ || true
 
       - name: Upload javac zip artifact
         uses: actions/upload-artifact@v4
