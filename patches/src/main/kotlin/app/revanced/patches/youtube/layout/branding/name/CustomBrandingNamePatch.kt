@@ -28,7 +28,7 @@ val customBrandingNamePatch = resourcePatch(
             "YouTube RVX" to "YouTube RVX",
             "YouTube" to APP_NAME,
         ),
-        title = "App name",
+        title = "App Name",
         description = "The name of the app.",
         required = true,
     )

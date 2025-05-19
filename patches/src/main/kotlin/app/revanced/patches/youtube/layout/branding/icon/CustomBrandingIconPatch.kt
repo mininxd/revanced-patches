@@ -257,9 +257,9 @@ val customBrandingIconPatch = resourcePatch(
                         )
                         splashScreenAnimationDuration.textContent =
                             if (appIcon.startsWith("revancify"))
-                                "1500"
-                            else
                                 "1000"
+                            else
+                                "500"
 
                         style.appendChild(splashScreenAnimatedIcon)
                         style.appendChild(splashScreenAnimationDuration)
