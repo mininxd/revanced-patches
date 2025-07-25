@@ -9,8 +9,8 @@ import app.revanced.patches.music.utils.settings.settingsPatch
 import app.revanced.util.removeStringsElements
 import app.revanced.util.valueOrThrow
 
-private const val APP_NAME_NOTIFICATION = "ReVanced Extended Music"
-private const val APP_NAME_LAUNCHER = "RVX Music"
+private const val APP_NAME_NOTIFICATION = "Youtube Music"
+private const val APP_NAME_LAUNCHER = "YT Music"
 
 @Suppress("unused")
 val customBrandingNamePatch = resourcePatch(

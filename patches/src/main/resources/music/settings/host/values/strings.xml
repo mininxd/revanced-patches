@@ -5,7 +5,7 @@
     <string name="revanced_extended_reset_to_default_toast">Reset to default values.</string>
 
     <!-- Shared Category -->
-    <string name="revanced_extended_restart_first_run">Restart to load the layout normally</string>
+    <string name="revanced_extended_restart_first_run">Music RVX with original icon, by mininxd v5.7.1</string>
     <string name="revanced_extended_restart_message">Refresh and restart</string>
 
     <!-- PreferenceScreen: Account -->

@@ -11,7 +11,7 @@
 
     <string name="revanced_preference_category_experimental_flag">Experimental flags</string>
     <string name="revanced_extended_confirm_user_dialog_title">Are you sure you want to proceed?</string>
-    <string name="revanced_extended_restart_first_run">Restart to load the layout normally</string>
+    <string name="revanced_extended_restart_first_run">Youtube RVX with original icon, by mininxd v5.7.1</string>
     <string name="revanced_extended_restart_title">Restart required</string>
     <string name="revanced_extended_restart_dialog_message">Restart the app for this change to take effect.</string>
     <string name="revanced_extended_restart">Restart</string>

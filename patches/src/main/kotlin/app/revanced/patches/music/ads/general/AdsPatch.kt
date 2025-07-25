@@ -73,7 +73,7 @@ val adsPatch = bytecodePatch(
 
     val hideFullscreenAds by booleanOption(
         key = "hideFullscreenAds",
-        default = false,
+        default = true,
         title = "Hide fullscreen ads",
         description = """
             Add an option to hide fullscreen ads.
