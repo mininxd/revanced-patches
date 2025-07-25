@@ -1,0 +1,47 @@
+name: Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Cache Gradle
+        uses: burrunan/gradle-cache-action@v1
+
+      - name: Install tree
+        run: sudo apt-get update && sudo apt-get install -y tree
+
+      - name: Make Gradle Executable
+        run: chmod +x ./gradlew
+
+      - name: Build and generate class file
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+        run: ./gradlew -p patches build generatePatchesFiles --no-daemon
+
+      - name: Zip compiled class files
+        run: |
+          tree ./ || true
+          mkdir -p output
+          zip -r output/javac-classes.zip ./patches/build/classes/kotlin/main/app/ || true
+
+      - name: Upload javac zip artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: javac-compiled-classes
+          path: output/javac-classes.zip
