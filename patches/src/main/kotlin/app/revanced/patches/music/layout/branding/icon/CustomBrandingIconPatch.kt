@@ -122,7 +122,7 @@ val customBrandingIconPatch = resourcePatch(
 
     val restoreOldSplashIconOption by booleanOption(
         key = "restoreOldSplashIcon",
-        default = false,
+        default = true,
         title = "Restore old splash icon",
         description = """
             Restore the old style splash icon.
