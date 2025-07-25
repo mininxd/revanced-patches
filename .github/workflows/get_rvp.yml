@@ -22,7 +22,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ./*.rvp
-          release_name: Patches 5.6.2_3
-          tag: 5.6.2.3
+          release_name: Patches 5.7.1
+          tag: 5.7.1
           file_glob: true
           overwrite: true
