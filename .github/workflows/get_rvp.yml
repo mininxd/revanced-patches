@@ -1,0 +1,48 @@
+name: Download RVP and Put on Release
+on:
+  workflow_dispatch:
+    inputs:
+      rvp_url:
+        description: 'URL file RVP (wajib diisi)'
+        required: false
+
+jobs:
+  run:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cek Input
+        run: |
+          if [ -z "${{ github.event.inputs.rvp_url }}" ]; then
+            echo "❌ Error: Input rvp_url wajib diisi."
+            exit 1
+          fi
+
+      - name: Install Dependencies
+        run: |
+          sudo apt install -y wget tree unzip zip
+
+      - name: Download RVP
+        id: download
+        run: |
+          RVP_URL="${{ github.event.inputs.rvp_url }}"
+          RVP_NAME=$(basename "${RVP_URL%%\?*}")      # contoh: patches-5.7.1.rvp
+          VERSION=$(echo "$RVP_NAME" | sed -E 's/^patches-([0-9.]+)\.rvp$/\1/')
+          echo "RVP_NAME=$RVP_NAME" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+          wget -O "$RVP_NAME" "$RVP_URL"
+          tree ./
+
+      - name: Upload to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          body: |
+              feat(YouTube Music - Ads): hide fullscreen ads `youtube premium offer`
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./*.rvp
+          release_name: Patches ${{ env.VERSION }}
+          tag: ${{ env.VERSION }}
+          file_glob: true
+          overwrite: true
+          

@@ -100,7 +100,7 @@ val darkThemePatch = resourcePatch(
 
     val materialYou by booleanOption(
         key = "materialYou",
-        default = false,
+        default = true,
         title = "MaterialYou",
         description = "Applies the MaterialYou theme for Android 12+ devices.",
         required = true
