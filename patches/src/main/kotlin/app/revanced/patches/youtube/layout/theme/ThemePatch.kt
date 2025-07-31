@@ -47,15 +47,15 @@ val themePatch = resourcePatch(
         "Light Orange" to "#FFFFE6CC",
         "Light Red" to "#FFFFD6D6",
     )
-
-    val darkThemeBackgroundColor = stringOption(
-    key = "darkThemeBackgroundColor",
-    default = "@color/material_dynamic_neutral0",
-    values = availableDarkTheme + mapOf("Material You" to "@color/material_dynamic_neutral0"),
-    title = "Dark theme background color",
-    description = "Can be a hex color (#AARRGGBB) or a color resource reference.",
-    required = true,
+val darkThemeBackgroundColor = stringOption(
+        key = "darkThemeBackgroundColor",
+        default = "#FF212121",
+        values = availableDarkTheme,
+        title = "Dark theme background color",
+        description = "Can be a hex color (#AARRGGBB) or a color resource reference.",
+        required = true,
     )
+    
     
     
     val lightThemeBackgroundColor = stringOption(
