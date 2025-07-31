@@ -1,5 +1,4 @@
 package app.revanced.patches.youtube.layout.theme
-
 import app.revanced.patcher.patch.resourcePatch
 import app.revanced.patcher.patch.stringOption
 import app.revanced.patches.youtube.utils.compatibility.Constants.COMPATIBLE_PACKAGE
@@ -47,7 +46,8 @@ val themePatch = resourcePatch(
         "Light Orange" to "#FFFFE6CC",
         "Light Red" to "#FFFFD6D6",
     )
-val darkThemeBackgroundColor = stringOption(
+
+    val darkThemeBackgroundColor = stringOption(
         key = "darkThemeBackgroundColor",
         default = amoledBlackColor,
         values = availableDarkTheme,
@@ -55,9 +55,7 @@ val darkThemeBackgroundColor = stringOption(
         description = "Can be a hex color (#AARRGGBB) or a color resource reference.",
         required = true,
     )
-    
-    
-    
+
     val lightThemeBackgroundColor = stringOption(
         key = "lightThemeBackgroundColor",
         default = whiteColor,
