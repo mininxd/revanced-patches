@@ -32,7 +32,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
-        run: ./gradlew -p patches build generatePatchesFiles --no-daemon
+        run: ./gradlew -p patches build generatePatchesFiles --no-daemon --debug
 
       - name: Zip compiled class files
         run: |
