@@ -37,7 +37,10 @@ tasks {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs = listOf("-Xcontext-receivers")
+        freeCompilerArgs = listOf(
+            "-Xcontext-receivers",
+            "-Xallow-break-continue-in-inline-lambdas"
+        )
     }
 }
 
