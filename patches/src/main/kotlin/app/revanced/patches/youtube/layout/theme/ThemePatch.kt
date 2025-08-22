@@ -49,7 +49,7 @@ val themePatch = resourcePatch(
 
     val darkThemeBackgroundColor = stringOption(
         key = "darkThemeBackgroundColor",
-        default = amoledBlackColor,
+        default = "#FF2B2B2B",
         values = availableDarkTheme,
         title = "Dark theme background color",
         description = "Can be a hex color (#AARRGGBB) or a color resource reference.",
