@@ -152,7 +152,7 @@ private val settingsBytecodePatch = bytecodePatch(
 }
 
 private const val DEFAULT_ELEMENT = "pref_key_parent_tools"
-private const val DEFAULT_LABEL = "RVX"
+private const val DEFAULT_LABEL = "Revanced Settings"
 private const val FALLBACK_ELEMENT = "settings_header_general"
 private lateinit var settingsLabel: String
 

@@ -28,7 +28,7 @@ val bypassImageRegionRestrictionsPatch = bytecodePatch(
         addSwitchPreference(
             CategoryType.MISC,
             "revanced_bypass_image_region_restrictions",
-            "false"
+            "true"
         )
 
         updatePatchStatus(BYPASS_IMAGE_REGION_RESTRICTIONS)

@@ -625,7 +625,7 @@ val playerComponentsPatch = bytecodePatch(
             addSwitchPreference(
                 CategoryType.PLAYER,
                 "revanced_enable_smooth_transition_animation",
-                "false"
+                "true"
             )
         }
 
@@ -839,7 +839,7 @@ val playerComponentsPatch = bytecodePatch(
         addSwitchPreference(
             CategoryType.PLAYER,
             "revanced_enable_zen_mode",
-            "false"
+            "true"
         )
         addSwitchPreference(
             CategoryType.PLAYER,
