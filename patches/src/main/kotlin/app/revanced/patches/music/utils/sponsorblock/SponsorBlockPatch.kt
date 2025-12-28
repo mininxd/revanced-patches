@@ -304,7 +304,7 @@ val sponsorBlockPatch = resourcePatch(
         addSwitchPreference(
             SPONSOR_BLOCK_CATEGORY,
             "sb_enabled",
-            "false"
+            "true"
         )
         addSwitchPreference(
             SPONSOR_BLOCK_CATEGORY,
