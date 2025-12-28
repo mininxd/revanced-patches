@@ -146,19 +146,19 @@ internal fun legacyFingerprint(
     name,
     fingerprint(fuzzyPatternScanThreshold = fuzzyPatternScanThreshold) {
         if (accessFlags != null) {
-            accessFlags(accessFlags)
+            this.accessFlags(accessFlags)
         }
         if (returnType != null) {
             returns(returnType)
         }
         if (parameters != null) {
-            parameters(*parameters.toTypedArray())
+            this.parameters(*parameters.toTypedArray())
         }
         if (opcodes != null) {
-            opcodes(*opcodes.toTypedArray())
+            this.opcodes(*opcodes.toTypedArray())
         }
         if (strings != null) {
-            strings(*strings.toTypedArray())
+            this.strings(*strings.toTypedArray())
         }
         custom { method, classDef ->
             if (literals != null) {
