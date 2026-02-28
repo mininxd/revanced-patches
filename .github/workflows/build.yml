@@ -49,7 +49,6 @@ jobs:
           find . -name "*.mpp" -exec cp {} output/ \;
           find . -name "*.mpe" -exec cp {} output/ \;
           find . -name "patches-list.json" -exec cp {} output/ \;
-          zip -r output/javac-classes.zip ./patches/build/classes/kotlin/main/app/ || true
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
