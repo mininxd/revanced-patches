@@ -200,7 +200,7 @@ val settingsPatch = bytecodePatch(
         addAppResources("shared-youtube")
         addAppResources("youtube")
 
-        // Add an "About" preference to the top.
+        // Add a placeholder for the patches version.
         preferences += NonInteractivePreference(
             key = "morphe_settings_screen_00_about",
             icon = "@drawable/morphe_settings_screen_00_about",
@@ -208,7 +208,7 @@ val settingsPatch = bytecodePatch(
             layout = "@layout/preference_with_icon",
             summaryKey = null,
             tag = "app.morphe.extension.shared.settings.preference.MorpheAboutPreference",
-            selectable = true,
+            selectable = false,
         )
 
         if (is_19_34_or_greater) {

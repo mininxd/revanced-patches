@@ -95,12 +95,12 @@ val settingsPatch = bytecodePatch(
         addAppResources("shared-youtube")
         addAppResources("music")
 
-        // Add an "About" preference to the top.
+        // Add a placeholder for the patches version.
         preferences += NonInteractivePreference(
             key = "morphe_settings_music_screen_0_about",
             summaryKey = null,
             tag = "app.morphe.extension.shared.settings.preference.MorpheAboutPreference",
-            selectable = true,
+            selectable = false,
         )
 
         PreferenceScreen.GENERAL.addPreferences(
