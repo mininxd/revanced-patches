@@ -33,4 +33,15 @@ settings {
     }
 }
 
+include(":patches")
 include(":patches:stub")
+
+include(":extensions:music")
+include(":extensions:reddit")
+include(":extensions:reddit:stub")
+include(":extensions:shared")
+include(":extensions:shared:library")
+include(":extensions:shared-youtube")
+include(":extensions:shared-youtube:library")
+include(":extensions:youtube")
+include(":extensions:youtube:stub")

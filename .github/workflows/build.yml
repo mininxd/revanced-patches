@@ -37,20 +37,22 @@ jobs:
       - name: Make Gradle Executable
         run: chmod +x ./gradlew
 
-      - name: Build and generate class file
+      - name: Build and generate patches
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
-        run: ./gradlew build generatePatchesList --no-daemon --stacktrace
+        run: ./gradlew assembleRelease build generatePatchesList --no-daemon --stacktrace
 
-      - name: Zip compiled class files
+      - name: Prepare artifacts
         run: |
-          tree ./ || true
           mkdir -p output
+          find . -name "*.mpp" -exec cp {} output/ \;
+          find . -name "*.mpe" -exec cp {} output/ \;
+          find . -name "patches-list.json" -exec cp {} output/ \;
           zip -r output/javac-classes.zip ./patches/build/classes/kotlin/main/app/ || true
 
-      - name: Upload javac zip artifact
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: javac-compiled-classes
-          path: output/javac-classes.zip
+          name: morphe-build-artifacts
+          path: output/
