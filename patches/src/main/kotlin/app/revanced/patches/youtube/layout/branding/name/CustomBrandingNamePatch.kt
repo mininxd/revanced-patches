@@ -8,7 +8,7 @@ import app.revanced.patches.youtube.utils.settings.settingsPatch
 import app.revanced.util.removeStringsElements
 import app.revanced.util.valueOrThrow
 
-private const val APP_NAME = "RVX"
+private const val APP_NAME = "YouTube"
 
 @Suppress("unused")
 val customBrandingNamePatch = resourcePatch(

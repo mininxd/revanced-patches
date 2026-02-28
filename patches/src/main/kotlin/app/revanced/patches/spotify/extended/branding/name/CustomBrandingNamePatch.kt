@@ -8,7 +8,7 @@ import java.io.FileWriter
 import java.nio.file.Files
 
 private const val ORIGINAL_APP_NAME = "Spotify"
-private const val APP_NAME = "RVX Spotify"
+private const val APP_NAME = "Spotify"
 
 @Suppress("unused")
 val customBrandingNamePatch = resourcePatch(

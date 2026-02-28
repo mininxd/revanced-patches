@@ -46,9 +46,9 @@ private val availableIcon = mapOf(
     "Xisr Evergreen" to "xisr_evergreen",
     "Xisr Special" to "xisr_special",
     "Xisr White" to "xisr_white",
-    "Xisr Winter" to DEFAULT_ICON,
+    "Xisr Winter" to "xisr_winter",
     "Xisr Yellow" to "xisr_yellow",
-    "YouTube" to "youtube",
+    "YouTube" to DEFAULT_ICON,
     "YouTube Black" to "youtube_black",
 )
 
