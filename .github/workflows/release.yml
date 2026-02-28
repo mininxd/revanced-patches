@@ -31,8 +31,10 @@ jobs:
       - name: Build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # To update `README.md` and `patches.json`, the command `./gradlew generatePatchesList clean` should be used instead of the command `./gradlew build clean`
-        run: ./gradlew clean assembleRelease generatePatchesList
+        run: |
+          ./gradlew clean assembleRelease generatePatchesList
+          VERSION=$(grep 'version' gradle.properties | cut -d'=' -f2 | tr -d ' ')
+          find patches/build/libs -name "*.mpp" -exec mv {} patches/build/libs/Patches-$VERSION.mpp \;
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

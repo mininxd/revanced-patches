@@ -46,9 +46,10 @@ jobs:
       - name: Prepare artifacts
         run: |
           mkdir -p output
-          find . -name "*.mpp" -exec cp {} output/ \;
+          VERSION=$(grep 'version' gradle.properties | cut -d'=' -f2 | tr -d ' ')
+          find patches/build/libs -name "*.mpp" -exec cp {} output/Patches-$VERSION.mpp \;
           find . -name "*.mpe" -exec cp {} output/ \;
-          find . -name "patches-list.json" -exec cp {} output/ \;
+          find . -name "patches.json" -exec cp {} output/ \;
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
