@@ -41,7 +41,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
-        run: ./gradlew build generatePatchesFiles --no-daemon --stacktrace
+        run: ./gradlew build generatePatchesList --no-daemon --stacktrace
 
       - name: Zip compiled class files
         run: |

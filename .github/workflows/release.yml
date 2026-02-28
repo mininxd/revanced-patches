@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: "zulu"
-          java-version: "17"
+          java-version: "21"
 
       - name: Cache Gradle
         uses: burrunan/gradle-cache-action@v3
@@ -31,8 +31,8 @@ jobs:
       - name: Build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # To update `README.md` and `patches.json`, the command `./gradlew generatePatchesFiles clean` should be used instead of the command `./gradlew build clean`
-        run: ./gradlew generatePatchesFiles clean
+        # To update `README.md` and `patches.json`, the command `./gradlew generatePatchesList clean` should be used instead of the command `./gradlew build clean`
+        run: ./gradlew generatePatchesList clean
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
