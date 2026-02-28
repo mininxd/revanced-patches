@@ -1,0 +1,15 @@
+/*
+ * Copyright 2026 Morphe.
+ * https://github.com/MorpheApp/morphe-patches
+ */
+
+package app.morphe.patches.youtube.misc.toolbar
+
+import app.morphe.patcher.Fingerprint
+import com.android.tools.smali.dexlib2.AccessFlags
+
+internal object ToolBarPatchFingerprint : Fingerprint(
+    definingClass = EXTENSION_CLASS_DESCRIPTOR,
+    name = "hookToolBar",
+    accessFlags = listOf(AccessFlags.PRIVATE, AccessFlags.STATIC)
+)
