@@ -1,5 +1,6 @@
 package app.revanced.patches.youtube.layout.translations
 
+import app.revanced.patcher.patch.bytecodePatch
 import app.revanced.patcher.patch.resourcePatch
 import app.revanced.patcher.patch.stringOption
 import app.revanced.patches.shared.translations.APP_LANGUAGES
@@ -11,9 +12,58 @@ import app.revanced.patches.youtube.utils.settings.settingsPatch
 
 // Array of supported translations, each represented by its language code.
 private val SUPPORTED_TRANSLATIONS = setOf(
-    "ar", "bg-rBG", "de-rDE", "el-rGR", "es-rES", "fr-rFR", "hu-rHU", "id-rID", "in", "it-rIT", "ja-rJP",
-    "ko-rKR", "pl-rPL", "pt-rBR", "ru-rRU", "tr-rTR", "uk-rUA", "vi-rVN", "zh-rCN", "zh-rTW"
+    "ar",
+    "az-rAZ",
+    "be-rBY",
+    "bg-rBG",
+    "cs-rCZ",
+    "da-rDK",
+    "de-rDE",
+    "el-rGR",
+    "en-rGB",
+    "en-rUS",
+    "es-rES",
+    "es-rUS",
+    "fa-rIR",
+    "fil-rPH",
+    "fr-rFR",
+    "ga-rIE",
+    "hu-rHU",
+    "id-rID",
+    "in",
+    "it-rIT",
+    "iw-rIL",
+    "ja-rJP",
+    "ko-rKR",
+    "lo-rLA",
+    "my-rMM",
+    "nl-rNL",
+    "pa-rIN",
+    "pl-rPL",
+    "pt-rBR",
+    "ru-rRU",
+    "sk-rSK",
+    "sv-rSE",
+    "ta-rIN",
+    "tr-rTR",
+    "uk-rUA",
+    "ur-rPK",
+    "uz-rUZ",
+    "vi-rVN",
+    "zh-rCN",
+    "zh-rTW",
 )
+
+@Suppress("unused")
+val translationsBytecodePatch = bytecodePatch {
+    execute {
+        addPreference(
+            arrayOf(
+                "PREFERENCE_SCREEN: TRANSLATIONS"
+            ), TRANSLATIONS_FOR_YOUTUBE
+        )
+    }
+}
 
 @Suppress("unused")
 val translationsPatch = resourcePatch(
@@ -21,8 +71,7 @@ val translationsPatch = resourcePatch(
     TRANSLATIONS_FOR_YOUTUBE.summary,
 ) {
     compatibleWith(COMPATIBLE_PACKAGE)
-
-    dependsOn(settingsPatch)
+    dependsOn(translationsBytecodePatch, settingsPatch)
 
     val customTranslations by stringOption(
         key = "customTranslations",

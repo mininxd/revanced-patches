@@ -20,7 +20,7 @@ class SwipeControlsConfigurationProvider {
      * Returns true if either volume or brightness controls are enabled and the video is in fullscreen mode.
      */
     val enableSwipeControls: Boolean
-        get() = (enableVolumeControls || enableBrightnessControl) && isFullscreenVideo
+        get() = (enableVolumeControls || enableBrightnessControl || enableSpeedControl || enableSeekControl) && isFullscreenVideo
 
     /**
      * Indicates whether swipe controls for adjusting volume are enabled.
@@ -31,6 +31,16 @@ class SwipeControlsConfigurationProvider {
      * Indicates whether swipe controls for adjusting brightness are enabled.
      */
     val enableBrightnessControl = Settings.SWIPE_BRIGHTNESS.get()
+
+    /**
+     * Indicates whether swipe controls for adjusting playback speed are enabled.
+     */
+    val enableSpeedControl = Settings.SWIPE_SPEED.get()
+
+    /**
+     * Indicates whether swipe controls for seeking are enabled.
+     */
+    val enableSeekControl = Settings.SWIPE_SEEK.get()
 
     /**
      * Fix https://github.com/inotia00/ReVanced_Extended/issues/3052.
@@ -82,19 +92,6 @@ class SwipeControlsConfigurationProvider {
     val swipeMagnitudeThreshold = Settings.SWIPE_MAGNITUDE_THRESHOLD.get()
 
     /**
-     * The minimum swipe distance of brightness swipe gestures, in pixels.
-     * Resets to default if set to 0, as it would disable swiping.
-     */
-    val brightnessSwipeDistance: Float by lazy {
-        validateValue(
-            Settings.SWIPE_BRIGHTNESS_DISTANCE_DIP,
-            0.1f,
-            10f,
-            "revanced_swipe_brightness_distance_dip_invalid_toast"
-        )
-    }
-
-    /**
      * The sensitivity of volume swipe gestures, determining how much volume changes per swipe.
      * Resets to default if set to 0, as it would disable swiping.
      */
@@ -107,11 +104,58 @@ class SwipeControlsConfigurationProvider {
         )
     }
 
+    /**
+     * The distance of volume swipe gestures.
+     */
+    val volumeDistance: Float by lazy {
+        validateValue(
+            Settings.SWIPE_VOLUME_DISTANCE,
+            1,
+            1000,
+            "revanced_swipe_distance_invalid"
+        ).toFloat() / 100 * 10 // 10f
+    }
+
+    /**
+     * The distance of brightness swipe gestures.
+     */
+    val brightnessDistance: Float by lazy {
+        validateValue(
+            Settings.SWIPE_BRIGHTNESS_DISTANCE,
+            1,
+            1000,
+            "revanced_swipe_distance_invalid"
+        ).toFloat() / 100 // 1f
+    }
+
+    /**
+     * The distance of speed swipe gestures.
+     */
+    val speedDistance: Float by lazy {
+        validateValue(
+            Settings.SWIPE_SPEED_DISTANCE,
+            1,
+            1000,
+            "revanced_swipe_distance_invalid"
+        ).toFloat() / 100 * 10 // 10f
+    }
+
+    /**
+     * The distance of seek swipe gestures.
+     */
+    val seekDistance: Float by lazy {
+        validateValue(
+            Settings.SWIPE_SEEK_DISTANCE,
+            1,
+            1000,
+            "revanced_swipe_distance_invalid"
+        ).toFloat() / 100 * 10 // 10f
+    }
+
     // endregion
 
     // region overlay adjustments
 
-    //region overlay adjustments
     /**
      * Indicates whether haptic feedback should be enabled for swipe control interactions.
      */
@@ -153,6 +197,22 @@ class SwipeControlsConfigurationProvider {
      */
     val overlayVolumeProgressColor: Int by lazy {
         validateColor(Settings.SWIPE_OVERLAY_VOLUME_COLOR)
+    }
+
+    /**
+     * The color of the progress bar in the overlay for speed.
+     * Resets to default and shows a toast if the color string is invalid or empty.
+     */
+    val overlaySpeedProgressColor: Int by lazy {
+        validateColor(Settings.SWIPE_OVERLAY_SPEED_COLOR)
+    }
+
+    /**
+     * The color of the progress bar in the overlay for seeking.
+     * Resets to default and shows a toast if the color string is invalid or empty.
+     */
+    val overlaySeekProgressColor: Int by lazy {
+        validateColor(Settings.SWIPE_OVERLAY_SEEK_COLOR)
     }
 
     /**

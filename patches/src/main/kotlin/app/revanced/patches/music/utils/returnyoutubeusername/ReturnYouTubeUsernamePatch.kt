@@ -16,7 +16,6 @@ import app.revanced.patches.shared.returnyoutubeusername.baseReturnYouTubeUserna
 val returnYouTubeUsernamePatch = resourcePatch(
     RETURN_YOUTUBE_USERNAME.title,
     RETURN_YOUTUBE_USERNAME.summary,
-    use = false,
 ) {
     compatibleWith(COMPATIBLE_PACKAGE)
 

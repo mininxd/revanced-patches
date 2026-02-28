@@ -5,12 +5,10 @@ import static app.revanced.extension.shared.utils.BaseThemeUtils.getDialogBackgr
 import static app.revanced.extension.shared.utils.StringRef.str;
 import static app.revanced.extension.shared.utils.Utils.createCornerRadii;
 import static app.revanced.extension.shared.utils.Utils.dipToPixels;
-import static app.revanced.extension.shared.utils.Utils.isSDKAbove;
 import static app.revanced.extension.shared.utils.Utils.showToastShort;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
@@ -24,29 +22,17 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.InflaterInputStream;
 
 import app.revanced.extension.shared.ui.CustomDialog;
 import app.revanced.extension.shared.utils.Logger;
 import app.revanced.extension.shared.utils.Utils;
 import app.revanced.extension.youtube.patches.utils.PatchStatus;
+import app.revanced.extension.youtube.settings.Settings; // Add this import
 import app.revanced.extension.youtube.shared.VideoInformation;
 import app.revanced.extension.youtube.utils.VideoUtils;
 
@@ -361,26 +347,28 @@ public class Whitelist {
     }
 
     /**
-     * @noinspection unchecked
+     * Parses the serialized whitelist data into a map of whitelist types and channels.
      */
     private static Map<WhitelistType, ArrayList<VideoChannel>> parseWhitelist() {
         WhitelistType[] whitelistTypes = WhitelistType.values();
         Map<WhitelistType, ArrayList<VideoChannel>> whitelistMap = new EnumMap<>(WhitelistType.class);
 
         for (WhitelistType whitelistType : whitelistTypes) {
-            SharedPreferences preferences = getPreferences(whitelistType.getPreferencesName());
-            String serializedChannels = preferences.getString("channels", null);
-            if (serializedChannels == null) {
-                whitelistMap.put(whitelistType, new ArrayList<>());
-                continue;
+            String serializedChannels = whitelistType == WhitelistType.PLAYBACK_SPEED
+                    ? Settings.OVERLAY_BUTTON_WHITELIST_PLAYBACK_SPEED.get()
+                    : Settings.OVERLAY_BUTTON_WHITELIST_SPONSORBLOCK.get();
+            ArrayList<VideoChannel> channels = new ArrayList<>();
+            if (!serializedChannels.isEmpty()) {
+                try {
+                    String[] parts = serializedChannels.split("~");
+                    for (int i = 0; i < parts.length - 1; i += 2) {
+                        channels.add(new VideoChannel(parts[i], parts[i + 1]));
+                    }
+                } catch (Exception ex) {
+                    Logger.printException(() -> "parseWhitelist failure", ex);
+                }
             }
-            try {
-                Object channelsObject = deserialize(serializedChannels);
-                ArrayList<VideoChannel> deserializedChannels = (ArrayList<VideoChannel>) channelsObject;
-                whitelistMap.put(whitelistType, deserializedChannels);
-            } catch (Exception ex) {
-                Logger.printException(() -> "parseWhitelist failure", ex);
-            }
+            whitelistMap.put(whitelistType, channels);
         }
         return whitelistMap;
     }
@@ -459,68 +447,29 @@ public class Whitelist {
     }
 
     private static boolean updateWhitelist(WhitelistType whitelistType, ArrayList<VideoChannel> channels) {
-        SharedPreferences.Editor editor = getPreferences(whitelistType.getPreferencesName()).edit();
-
-        final String channelName = serialize(channels);
-        if (channelName != null && !channelName.isEmpty()) {
-            editor.putString("channels", channelName);
-            editor.apply();
-            return true;
+        StringBuilder serialized = new StringBuilder();
+        for (VideoChannel channel : channels) {
+            if (serialized.length() > 0) {
+                serialized.append("~");
+            }
+            serialized.append(channel.getChannelName()).append("~").append(channel.getChannelId());
         }
-        return false;
+        String serializedString = serialized.toString();
+        try {
+            if (whitelistType == WhitelistType.PLAYBACK_SPEED) {
+                Settings.OVERLAY_BUTTON_WHITELIST_PLAYBACK_SPEED.save(serializedString);
+            } else {
+                Settings.OVERLAY_BUTTON_WHITELIST_SPONSORBLOCK.save(serializedString);
+            }
+            return true;
+        } catch (Exception ex) {
+            Logger.printException(() -> "updateWhitelist failure", ex);
+            return false;
+        }
     }
 
     public static ArrayList<VideoChannel> getWhitelistedChannels(WhitelistType whitelistType) {
         return whitelistMap.get(whitelistType);
-    }
-
-    private static SharedPreferences getPreferences(@NonNull String prefName) {
-        final Context context = Utils.getContext();
-        return context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
-    }
-
-    private static String serialize(Serializable obj) {
-        try {
-            if (obj != null) {
-                ByteArrayOutputStream serialObj = new ByteArrayOutputStream();
-                Deflater def = new Deflater(Deflater.BEST_COMPRESSION);
-                ObjectOutputStream objStream =
-                        new ObjectOutputStream(new DeflaterOutputStream(serialObj, def));
-                objStream.writeObject(obj);
-                objStream.close();
-                return encodeBytes(serialObj.toByteArray());
-            }
-        } catch (IOException ex) {
-            Logger.printException(() -> "Serialization error: " + ex.getMessage(), ex);
-        }
-        return null;
-    }
-
-    private static Object deserialize(@NonNull String str) {
-        try {
-            final ByteArrayInputStream serialObj = new ByteArrayInputStream(decodeBytes(str));
-            final ObjectInputStream objStream = new ObjectInputStream(new InflaterInputStream(serialObj));
-            return objStream.readObject();
-        } catch (ClassNotFoundException | IOException ex) {
-            Logger.printException(() -> "Deserialization error: " + ex.getMessage(), ex);
-        }
-        return null;
-    }
-
-    private static String encodeBytes(byte[] bytes) {
-        if (isSDKAbove(26)) {
-            return Base64.getEncoder().encodeToString(bytes);
-        } else {
-            return new String(bytes, StandardCharsets.UTF_8);
-        }
-    }
-
-    private static byte[] decodeBytes(String str) {
-        if (isSDKAbove(26)) {
-            return Base64.getDecoder().decode(str.getBytes(StandardCharsets.UTF_8));
-        } else {
-            return str.getBytes(StandardCharsets.UTF_8);
-        }
     }
 
     public enum WhitelistType {
@@ -528,20 +477,14 @@ public class Whitelist {
         SPONSOR_BLOCK();
 
         private final String friendlyName;
-        private final String preferencesName;
 
         WhitelistType() {
             String name = name().toLowerCase();
             this.friendlyName = str("revanced_whitelist_" + name);
-            this.preferencesName = "whitelist_" + name;
         }
 
         public String getFriendlyName() {
             return friendlyName;
-        }
-
-        public String getPreferencesName() {
-            return preferencesName;
         }
     }
 }

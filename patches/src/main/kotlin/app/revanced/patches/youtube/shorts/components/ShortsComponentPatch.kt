@@ -15,6 +15,7 @@ import app.revanced.patches.shared.litho.lithoFilterPatch
 import app.revanced.patches.shared.mainactivity.injectOnCreateMethodCall
 import app.revanced.patches.shared.textcomponent.hookSpannableString
 import app.revanced.patches.shared.textcomponent.textComponentPatch
+import app.revanced.patches.youtube.player.overlaybuttons.geminiButton
 import app.revanced.patches.youtube.utils.bottomSheetMenuItemBuilderFingerprint
 import app.revanced.patches.youtube.utils.compatibility.Constants.COMPATIBLE_PACKAGE
 import app.revanced.patches.youtube.utils.engagement.engagementPanelHookPatch
@@ -32,6 +33,7 @@ import app.revanced.patches.youtube.utils.navigation.navigationBarHookPatch
 import app.revanced.patches.youtube.utils.patch.PatchList.HIDE_FEED_FLYOUT_MENU
 import app.revanced.patches.youtube.utils.patch.PatchList.SHORTS_COMPONENTS
 import app.revanced.patches.youtube.utils.playertype.playerTypeHookPatch
+import app.revanced.patches.youtube.utils.playservice.*
 import app.revanced.patches.youtube.utils.playservice.is_18_31_or_greater
 import app.revanced.patches.youtube.utils.playservice.is_18_34_or_greater
 import app.revanced.patches.youtube.utils.playservice.is_18_49_or_greater
@@ -66,13 +68,10 @@ import app.revanced.patches.youtube.utils.toolbar.toolBarHookPatch
 import app.revanced.patches.youtube.utils.videoIdFingerprintShorts
 import app.revanced.patches.youtube.video.information.hookShortsVideoInformation
 import app.revanced.patches.youtube.video.information.videoInformationPatch
-import app.revanced.patches.youtube.video.playbackstart.PLAYBACK_START_DESCRIPTOR_CLASS_DESCRIPTOR
-import app.revanced.patches.youtube.video.playbackstart.playbackStartDescriptorPatch
-import app.revanced.patches.youtube.video.playbackstart.playbackStartVideoIdReference
-import app.revanced.patches.youtube.video.playbackstart.shortsPlaybackStartIntentFingerprint
-import app.revanced.patches.youtube.video.playbackstart.shortsPlaybackStartIntentLegacyFingerprint
+import app.revanced.patches.youtube.video.playbackstart.*
 import app.revanced.patches.youtube.video.videoid.hookPlayerResponseVideoId
 import app.revanced.patches.youtube.video.videoid.videoIdPatch
+import app.revanced.util.*
 import app.revanced.util.REGISTER_TEMPLATE_REPLACEMENT
 import app.revanced.util.ResourceGroup
 import app.revanced.util.cloneMutable
@@ -100,11 +99,7 @@ import app.revanced.util.replaceLiteralInstructionCall
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
-import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.*
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.util.MethodUtil
@@ -473,7 +468,9 @@ private val shortsRepeatPatch = bytecodePatch(
         lateinit var insertMethod: MutableMethod
         var insertMethodFound = false
 
-        if (is_18_49_or_greater) {
+        if (is_20_16_or_greater) {
+            insertMethod = reelPlaybackRepeatFingerprint2016.methodOrThrow()
+        } else if (is_18_49_or_greater) {
             insertMethod = reelPlaybackRepeatFingerprint.methodOrThrow()
         } else {
             val isInsertMethod: Method.() -> Boolean = {
@@ -612,7 +609,7 @@ private val shortsTimeStampPatch = bytecodePatch(
 
     execute {
 
-        if (!is_19_34_or_greater) {
+        if (!is_19_34_or_greater || is_20_18_or_greater) {
             return@execute
         }
 
@@ -731,6 +728,8 @@ val shortsComponentPatch = bytecodePatch(
     dependsOn(
         settingsPatch,
 
+        geminiButton,
+
         shortsAnimationPatch,
         shortsCustomActionsPatch,
         shortsNavigationBarPatch,
@@ -771,6 +770,7 @@ val shortsComponentPatch = bytecodePatch(
             reversed: Boolean
         ) =
             methodOrThrow().apply {
+                if (is_20_18_or_greater) return@apply
                 val constIndex = indexOfFirstLiteralInstructionOrThrow(id)
                 val insertIndex = if (reversed)
                     indexOfFirstInstructionReversedOrThrow(constIndex, Opcode.CHECK_CAST)
@@ -811,6 +811,9 @@ val shortsComponentPatch = bytecodePatch(
 
         if (is_19_34_or_greater) {
             settingArray += "SETTINGS: SHORTS_REPEAT_STATE_BACKGROUND"
+        }
+
+        if (is_19_34_or_greater && !is_20_18_or_greater) {
             settingArray += "SETTINGS: SHORTS_TIME_STAMP"
         } else {
             settingArray += "SETTINGS: SHORTS_PLAY_PAUSE_BUTTON_BACKGROUND"
@@ -825,6 +828,7 @@ val shortsComponentPatch = bytecodePatch(
         // region patch for hide dislike button (non-litho)
 
         shortsButtonFingerprint.methodOrThrow().apply {
+            if (is_20_18_or_greater) return@apply
             val constIndex =
                 indexOfFirstLiteralInstructionOrThrow(reelRightDislikeIcon)
             val constRegister = getInstruction<OneRegisterInstruction>(constIndex).registerA
@@ -846,6 +850,7 @@ val shortsComponentPatch = bytecodePatch(
         // region patch for hide like button (non-litho)
 
         shortsButtonFingerprint.methodOrThrow().apply {
+            if (is_20_18_or_greater) return@apply
             val insertIndex = indexOfFirstLiteralInstructionOrThrow(reelRightLikeIcon)
             val insertRegister = getInstruction<OneRegisterInstruction>(insertIndex).registerA
             val jumpIndex = indexOfFirstInstructionOrThrow(insertIndex, Opcode.CONST_CLASS) + 2
@@ -1053,31 +1058,24 @@ val shortsComponentPatch = bytecodePatch(
         // region Disable experimental Shorts flags.
 
         // Flags might be present in earlier targets, but they are not found in 19.47.53.
-        // If these flags are forced on, the experimental layout is still not used and
+        // If these flags are forced on, the experimental layout is still not used, and
         // it appears the features requires additional server side data to fully use.
         if (is_20_07_or_greater) {
-            mapOf(
-                // Experimental Shorts player uses Android native buttons and not Litho,
-                // and the layout is provided by the server.
-                //
-                // Since the buttons are native components and not Litho, it should be possible to
-                // fix the RYD Shorts loading delay by asynchronously loading RYD and updating
-                // the button text after RYD has loaded.
-                shortsExperimentalPlayerFeatureFlagFingerprint to SHORTS_EXPERIMENTAL_PLAYER_FEATURE_FLAG,
+            // Experimental Shorts player uses Android native buttons and not Litho,
+            // and the layout is provided by the server.
+            //
+            // Since the buttons are native components and not Litho, it should be possible to
+            // fix the RYD Shorts loading delay by asynchronously loading RYD and updating
+            // the button text after RYD has loaded.
+            shortsExperimentalPlayerFeatureFlagFingerprint.method.returnLate(false)
 
-                // Experimental UI renderer must also be disabled since it requires the
-                // experimental Shorts player.  If this is enabled but Shorts player
-                // is disabled then the app crashes when the Shorts player is opened.
-                renderNextUIFeatureFlagFingerprint to RENDER_NEXT_UI_FEATURE_FLAG
-            ).forEach { (fingerprint, literal) ->
-                fingerprint.injectLiteralInstructionBooleanCall(
-                    literal,
-                    "0x0"
-                )
-            }
+            // Experimental UI renderer must also be disabled since it requires the
+            // experimental Shorts player.  If this is enabled but Shorts player
+            // is disabled then the app crashes when the Shorts player is opened.
+            renderNextUIFeatureFlagFingerprint.method.returnLate(false)
         }
 
-        // endregion
+        // endregion Disable experimental Shorts flags.
 
         addLithoFilter(BUTTON_FILTER_CLASS_DESCRIPTOR)
         addLithoFilter(SHELF_FILTER_CLASS_DESCRIPTOR)

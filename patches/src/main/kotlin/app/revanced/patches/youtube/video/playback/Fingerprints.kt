@@ -1,5 +1,6 @@
 package app.revanced.patches.youtube.video.playback
 
+import app.revanced.patcher.extensions.InstructionExtensions.instructionsOrNull
 import app.revanced.util.fingerprint.legacyFingerprint
 import app.revanced.util.getReference
 import app.revanced.util.indexOfFirstInstruction
@@ -8,6 +9,8 @@ import app.revanced.util.or
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 
 internal val deviceDimensionsModelToStringFingerprint = legacyFingerprint(
@@ -35,48 +38,57 @@ internal val playbackSpeedChangedFromRecyclerViewFingerprint = legacyFingerprint
     }
 )
 
-internal val mediaLibPlayerLoadVideoFingerprint = legacyFingerprint(
-    name = "mediaLibPlayerLoadVideoFingerprint",
-    returnType = "V",
-    accessFlags = AccessFlags.PUBLIC or AccessFlags.FINAL,
-    opcodes = listOf(Opcode.CONST_HIGH16),
-    strings = listOf("Volume: %f"),
-    customFingerprint = { method, _ ->
-        indexOfPlaybackSpeedInstruction(method) >= 0
+// Fingerprint for the METHOD that returns PlayerConfigModel
+private const val PCM_GETTER_FIELD_TYPE = "Lcom/google/android/libraries/youtube/innertube/model/media/PlayerConfigModel;"
+val pcmGetterMethodFingerprint = legacyFingerprint(
+    name = "pcmGetterMethodFingerprint",
+    returnType = PCM_GETTER_FIELD_TYPE,
+    parameters = listOf(),
+    opcodes = listOf(Opcode.IGET_OBJECT, Opcode.RETURN_OBJECT),
+    customFingerprint = custom@{ method, _ ->
+        val instructions = method.instructionsOrNull
+        if (instructions == null || instructions.count() != 2) return@custom false
+
+        ((method.instructionsOrNull?.firstOrNull() as? ReferenceInstruction)?.reference
+                as? FieldReference)?.type == PCM_GETTER_FIELD_TYPE
     }
 )
 
-internal fun indexOfPlaybackSpeedInstruction(method: Method, startIndex: Int = 0) =
-    method.indexOfFirstInstruction(startIndex) {
-        opcode == Opcode.IGET &&
-                getReference<FieldReference>()?.type == "F"
-    }
+internal val loadVideoParamsFingerprint = legacyFingerprint(
+    name = "loadVideoParamsFingerprint",
+    returnType = "V",
+    accessFlags = AccessFlags.PUBLIC or AccessFlags.CONSTRUCTOR,
+    parameters = listOf("L"),
+    opcodes = listOf(
+        Opcode.INVOKE_INTERFACE,
+        Opcode.MOVE_RESULT,
+        Opcode.IPUT,
+        Opcode.INVOKE_INTERFACE,
+    )
+)
+
+internal val loadVideoParamsParentFingerprint = legacyFingerprint(
+    name = "loadVideoParamsParentFingerprint",
+    returnType = "Z",
+    parameters = listOf("J"),
+    strings = listOf("LoadVideoParams.playerListener = null")
+)
 
 internal val qualityChangedFromRecyclerViewFingerprint = legacyFingerprint(
     name = "qualityChangedFromRecyclerViewFingerprint",
     returnType = "L",
     accessFlags = AccessFlags.PUBLIC or AccessFlags.FINAL,
     parameters = listOf("L"),
-    opcodes = listOf(
-        Opcode.IGET,  // Video resolution int (human readable).
-        Opcode.IGET_OBJECT,  // Video resolution string (human readable).
-        Opcode.IGET_BOOLEAN,
-        Opcode.IGET_OBJECT,
-        Opcode.INVOKE_STATIC,
-        Opcode.MOVE_RESULT_OBJECT,
-        Opcode.INVOKE_DIRECT,
-        Opcode.IGET_OBJECT,
-        Opcode.INVOKE_INTERFACE,
-        Opcode.MOVE_RESULT_OBJECT,
-        Opcode.INVOKE_VIRTUAL,
-        Opcode.GOTO,
-        Opcode.CONST_4,
-        Opcode.IF_NE,
-        Opcode.IGET_OBJECT,
-        Opcode.INVOKE_INTERFACE,
-        Opcode.MOVE_RESULT_OBJECT,
-        Opcode.IGET,
-    )
+    customFingerprint = { method, _ ->
+        method.implementation?.instructions?.any { insn ->
+            insn.opcode == Opcode.NEW_INSTANCE &&
+                    (insn as? ReferenceInstruction)?.reference?.toString() == "Lcom/google/android/libraries/youtube/innertube/model/media/VideoQuality;"
+        } == true &&
+                method.implementation?.instructions?.any { insn ->
+                    insn.opcode == Opcode.CONST_4 &&
+                            (insn as? NarrowLiteralInstruction)?.narrowLiteral == 2
+                } == true
+    }
 )
 
 internal val qualityMenuViewInflateOnItemClickFingerprint = legacyFingerprint(

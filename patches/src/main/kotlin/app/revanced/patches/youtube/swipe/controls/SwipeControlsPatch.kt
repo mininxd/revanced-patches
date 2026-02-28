@@ -234,6 +234,8 @@ val swipeControlsPatch = bytecodePatch(
                 "revanced_ic_sc_brightness_low.xml",
                 "revanced_ic_sc_brightness_manual.xml",
                 "revanced_ic_sc_brightness_medium.xml",
+                "revanced_ic_sc_seek.xml",
+                "revanced_ic_sc_speed.xml",
                 "revanced_ic_sc_volume_high.xml",
                 "revanced_ic_sc_volume_low.xml",
                 "revanced_ic_sc_volume_mute.xml",

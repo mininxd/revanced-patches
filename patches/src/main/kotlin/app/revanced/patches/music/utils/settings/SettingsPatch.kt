@@ -214,7 +214,7 @@ val settingsPatch = resourcePatch(
             .valueOrThrow()
 
         if (!is_6_39_or_greater && insertKey == DEFAULT_ELEMENT) {
-            // 'Parent settings' does not exists in YT Music 6.38.
+            // 'Parent settings' does not exist in YT Music 6.38.
             // Fallback to 'General'
             insertKey = FALLBACK_ELEMENT
             printInfo("Since this version does not have \"Parent settings\", patch option \"Insert position\" is replaced with \"General\".")
@@ -328,6 +328,12 @@ val settingsPatch = resourcePatch(
                 gmsCorePackageName,
                 "org.microg.gms.ui.SettingsActivity"
             )
+
+            addSwitchPreference(
+                CategoryType.MISC,
+                "revanced_gms_show_dialog",
+                "true"
+            )
         }
 
         /**
@@ -379,7 +385,7 @@ internal fun addSwitchPreference(
 ) {
     val categoryValue = category.value
     ResourceUtils.addPreferenceCategory(categoryValue)
-    ResourceUtils.addSwitchPreference(categoryValue, key, defaultValue, dependencyKey, setSummary)
+        ResourceUtils.addSwitchPreference(categoryValue, key, defaultValue, dependencyKey, setSummary)
 }
 
 internal fun addPreferenceWithIntent(
@@ -390,4 +396,14 @@ internal fun addPreferenceWithIntent(
     val categoryValue = category.value
     ResourceUtils.addPreferenceCategory(categoryValue)
     ResourceUtils.addPreferenceWithIntent(categoryValue, key, dependencyKey)
+}
+
+internal fun addLinkPreference(
+    category: CategoryType,
+    key: String,
+    url: String
+) {
+    val categoryValue = category.value
+    ResourceUtils.addPreferenceCategory(categoryValue)
+    ResourceUtils.addLinkPreference(categoryValue, key, url)
 }

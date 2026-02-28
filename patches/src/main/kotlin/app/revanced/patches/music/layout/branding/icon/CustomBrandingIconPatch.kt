@@ -26,15 +26,24 @@ private const val ADAPTIVE_ICON_BACKGROUND_FILE_NAME =
     "adaptiveproduct_youtube_music_background_color_108"
 private const val ADAPTIVE_ICON_FOREGROUND_FILE_NAME =
     "adaptiveproduct_youtube_music_foreground_color_108"
-private const val DEFAULT_ICON = "youtube_music"
+private const val DEFAULT_ICON = "xisr_yellow"
 
 private val availableIcon = mapOf(
     "AFN Blue" to "afn_blue",
     "AFN Red" to "afn_red",
     "MMT" to "mmt",
+    "MMT Blue" to "mmt_blue",
+    "MMT Green" to "mmt_green",
+    "MMT Orange" to "mmt_orange",
+    "MMT Pink" to "mmt_pink",
+    "MMT Turquoise" to "mmt_turquoise",
+    "MMT Yellow" to "mmt_yellow",
     "Revancify Blue" to "revancify_blue",
     "Revancify Red" to "revancify_red",
-    "YouTube Music" to DEFAULT_ICON
+    "Vanced Black" to "vanced_black",
+    "Vanced Light" to "vanced_light",
+    "Xisr Yellow" to DEFAULT_ICON,
+    "YouTube Music" to "youtube_music"
 )
 
 private val sizeArray = arrayOf(
@@ -85,6 +94,7 @@ private val splashIconResourceGroups =
 val customBrandingIconPatch = resourcePatch(
     CUSTOM_BRANDING_ICON_FOR_YOUTUBE_MUSIC.title,
     CUSTOM_BRANDING_ICON_FOR_YOUTUBE_MUSIC.summary,
+    false,
 ) {
     compatibleWith(COMPATIBLE_PACKAGE)
 

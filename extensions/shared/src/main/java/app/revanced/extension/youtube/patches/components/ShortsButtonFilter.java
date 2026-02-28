@@ -102,6 +102,11 @@ public final class ShortsButtonFilter extends Filter {
                 "participation_bar."
         );
 
+        StringFilterGroup shortsCommentsPanel = new StringFilterGroup(
+                Settings.HIDE_SHORTS_COMMENTS_PANEL,
+                "participation_composer"
+        );
+
         StringFilterGroup likeButton = new StringFilterGroup(
                 Settings.HIDE_SHORTS_LIKE_BUTTON,
                 "shorts_like_button.",
@@ -151,7 +156,7 @@ public final class ShortsButtonFilter extends Filter {
                 suggestedAction, actionButton, joinButton, subscribeButton, metaPanelButton,
                 pausedOverlayButtons, autoDubbedLabel, channelBar, videoLinkLabel,
                 videoTitle, reelSoundMetadata, infoPanel, liveHeader, livePreview,
-                previewComment, soundButton, stickers, likeButton, dislikeButton
+                previewComment, soundButton, stickers, likeButton, dislikeButton, shortsCommentsPanel
         );
 
         //
@@ -203,7 +208,7 @@ public final class ShortsButtonFilter extends Filter {
                 new ByteArrayFilterGroup(
                         Settings.HIDE_SHORTS_TAGGED_PRODUCTS,
                         // Product buttons show pictures of the products, and does not have any unique icons to identify.
-                        // Instead use a unique identifier found in the buffer.
+                        // Instead, use a unique identifier found in the buffer.
                         "PAproduct_listZ"
                 ),
                 new ByteArrayFilterGroup(
@@ -241,6 +246,14 @@ public final class ShortsButtonFilter extends Filter {
                         Settings.HIDE_SHORTS_GREEN_SCREEN_BUTTON,
                         "greenscreen_temp",
                         "shorts_green_screen"
+                ),
+                new ByteArrayFilterGroup(
+                        Settings.HIDE_SHORTS_HASHTAG_BUTTON,
+                        "yt_outline_hashtag"
+                ),
+                new ByteArrayFilterGroup(
+                        Settings.HIDE_SHORTS_NEW_POSTS_BUTTON,
+                        "yt_outline_box_pencil"
                 ),
                 useThisSoundButton
         );

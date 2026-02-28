@@ -21,7 +21,7 @@ val APP_LANGUAGES = arrayOf(
     "ca", "cs",
     "da", "de",
     "el", "en-rAU", "en-rCA", "en-rGB", "en-rIN", "en-rXA", "en-rXC", "es", "es-rUS", "et", "eu",
-    "fa", "fi", "fr", "fr-rCA",
+    "fa", "fi", "fil-rPH", "fr", "fr-rCA",
     "gl", "gu",
     "hi", "hr", "hu", "hy",
     "id", "in", "is", "it", "iw",
@@ -96,24 +96,26 @@ fun ResourcePatchContext.baseTranslationsPatch(
         }.toHashSet().toTypedArray()
 
     // Remove unselected app languages from UI
-    document("res/xml/locales_config.xml").use { document ->
-        val nodesToRemove = mutableListOf<Node>()
+    try {
+        document("res/xml/locales_config.xml").use { document ->
+            val nodesToRemove = mutableListOf<Node>()
 
-        document.doRecursively { node ->
-            if (node is Element && node.tagName == "locale") {
-                node.getAttributeNode("android:name")?.let { attribute ->
-                    if (attribute.textContent !in filteredAppLanguages) {
-                        nodesToRemove.add(node)
+            document.doRecursively { node ->
+                if (node is Element && node.tagName == "locale") {
+                    node.getAttributeNode("android:name")?.let { attribute ->
+                        if (attribute.textContent !in filteredAppLanguages) {
+                            nodesToRemove.add(node)
+                        }
                     }
                 }
             }
-        }
 
-        // Remove the collected nodes (avoids NullPointerException)
-        for (node in nodesToRemove) {
-            node.parentNode?.removeChild(node)
+            // Remove the collected nodes (avoids NullPointerException)
+            for (node in nodesToRemove) {
+                node.parentNode?.removeChild(node)
+            }
         }
-    }
+    } catch (_: Exception) {}
 
     if (!isYouTube) return
 
@@ -172,13 +174,19 @@ private fun ResourcePatchContext.copyStringsXml(
     sourceDirectory: String,
     languageArray: Array<String>
 ) {
+    val languageMap = mapOf(
+        "fil-rPH" to "tl"
+    )
+
     val resourceDirectory = get("res")
     languageArray.forEach { language ->
+        val sourceLanguage = languageMap[language] ?: language
+
         inputStreamFromBundledResource(
             "$sourceDirectory/translations",
             "$language/strings.xml"
         )?.let { inputStream ->
-            val directory = "values-$language-v21"
+            val directory = "values-$sourceLanguage-v21"
             val valuesV21Directory = resourceDirectory.resolve(directory)
             if (!valuesV21Directory.isDirectory) valuesV21Directory.mkdirs()
 

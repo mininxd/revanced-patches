@@ -30,7 +30,7 @@ import app.revanced.extension.youtube.patches.utils.PatchStatus;
 import app.revanced.extension.youtube.patches.utils.ReturnYouTubeDislikePatch;
 import app.revanced.extension.youtube.returnyoutubedislike.ReturnYouTubeDislike;
 import app.revanced.extension.youtube.settings.Settings;
-import app.revanced.extension.youtube.settings.YouTubeHostActivity;
+import app.revanced.extension.youtube.settings.YouTubeActivityHook;
 import app.revanced.extension.youtube.utils.ExtendedUtils;
 
 /**
@@ -109,9 +109,9 @@ public class YouTubePreferenceFragment extends ToolbarPreferenceFragment {
         super.onStart();
         try {
             // Initialize search controller if needed.
-            if (YouTubeHostActivity.searchViewController != null) {
+            if (YouTubeActivityHook.searchViewController != null) {
                 // Trigger search data collection after fragment is ready.
-                YouTubeHostActivity.searchViewController.initializeSearchData();
+                YouTubeActivityHook.searchViewController.initializeSearchData();
             }
             Setting.preferences.preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
         } catch (Exception ex) {
@@ -130,7 +130,7 @@ public class YouTubePreferenceFragment extends ToolbarPreferenceFragment {
      */
     @Override
     protected void customizeToolbar(Toolbar toolbar) {
-        YouTubeHostActivity.setToolbarLayoutParams(toolbar);
+        YouTubeActivityHook.setToolbarLayoutParams(toolbar);
     }
 
     /**
@@ -138,9 +138,9 @@ public class YouTubePreferenceFragment extends ToolbarPreferenceFragment {
      */
     @Override
     protected void onPostToolbarSetup(Toolbar toolbar, Dialog preferenceScreenDialog) {
-        if (YouTubeHostActivity.searchViewController != null
-                && YouTubeHostActivity.searchViewController.isSearchActive()) {
-            toolbar.post(() -> YouTubeHostActivity.searchViewController.closeSearch());
+        if (YouTubeActivityHook.searchViewController != null
+                && YouTubeActivityHook.searchViewController.isSearchActive()) {
+            toolbar.post(() -> YouTubeActivityHook.searchViewController.closeSearch());
         }
     }
 

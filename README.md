@@ -3,17 +3,14 @@
 
     
 ## 🧩 ReVanced Extended Patches
-ReVanced Extended Patches. 
-    
-[![Static Badge](https://img.shields.io/badge/RVX_Documentation-gray?style=flat-square&logo=github)](https://github.com/inotia00/revanced-documentation#readme)   [![Static Badge](https://img.shields.io/badge/Reddit-gray?style=flat-square&logo=reddit)](https://reddit.com/r/revancedextended)   [![Static Badge](https://img.shields.io/badge/Discord-gray?style=flat-square&logo=discord)](https://discord.gg/yMnc3EywRZ)
+[![Static Badge](https://img.shields.io/badge/RVX_Wiki-gray?logo=github)](https://github.com/anddea/revanced-patches/wiki)   [![Static Badge](https://img.shields.io/badge/Translations-gray?logo=crowdin)](https://rvxtranslate.netlify.app/)
 <br>
-[![Static Badge](https://img.shields.io/badge/Telegram-Announcements-gray?style=flat-square&logo=telegram&color=%2326A5E4)](https://t.me/revanced_extended)   [![Static Badge](https://img.shields.io/badge/Telegram-Chat-gray?style=flat-square&logo=telegram&color=%2326A5E4)](https://t.me/revanced_extended_chat)   [![Static Badge](https://img.shields.io/badge/Telegram-GitHub_Notifications-gray?style=flat-square&logo=telegram&color=%2326A5E4)](https://t.me/revanced_extended_repo)
-<br>
-[![Static Badge](https://img.shields.io/badge/Translations-YouTube-gray?style=flat-square&logo=crowdin&color=%23f5f5f5)](https://crowdin.com/project/revancedextended)   [![Static Badge](https://img.shields.io/badge/Translations-YT_Music-gray?style=flat-square&logo=crowdin&color=%23f5f5f5)](https://crowdin.com/project/revancedmusicextended)
-<br>
-</div> 
+[![Static Badge](https://img.shields.io/badge/Telegram-Community-gray?logo=telegram&color=%2326A5E4)](https://t.me/AnddeaChat)   [![Static Badge](https://img.shields.io/badge/Reddit-RVX-gray?logo=reddit&color=red)](https://reddit.com/r/revancedextended)   [![Static Badge](https://img.shields.io/badge/Reddit-YTAdvanced-gray?logo=reddit&color=yellow)](https://www.reddit.com/r/YTadvanced)
+</div>
 
-See the [documentation](https://github.com/inotia00/revanced-documentation#readme) to learn how to apply patches and build ReVanced Extended apps.
+## Documentation
+
+Check the [wiki](https://github.com/anddea/revanced-patches/wiki) for resources on patching, customization, and debugging.
 
 Report issues [here](https://github.com/inotia00/ReVanced_Extended).
 
@@ -50,7 +47,7 @@ Report issues [here](https://github.com/inotia00/ReVanced_Extended).
 | `Disable splash animation` | Adds an option to disable the splash animation on app startup. | 19.05.36 ~ 20.05.46 |
 | `Enable debug logging` | Adds an option for debugging and exporting RVX logs to the clipboard. | 19.05.36 ~ 20.05.46 |
 | `Enable gradient loading screen` | Adds an option to enable the gradient loading screen. | 19.05.36 ~ 20.05.46 |
-| `Force hide player buttons background` | Removes, at compile time, the dark background surrounding the video player controls. | 19.05.36 ~ 20.05.46 |
+| `Force player buttons background` | Changes the dark background surrounding the video player controls at compile time. | 19.05.36 ~ 20.05.46 |
 | `Fullscreen components` | Adds options to hide or change components related to fullscreen. | 19.05.36 ~ 20.05.46 |
 | `GmsCore support` | Allows the app to work without root by using a different package name when patched using a GmsCore instead of Google Play Services. | 19.05.36 ~ 20.05.46 |
 | `Hide Shorts dimming` | Removes, at compile time, the dimming effect at the top and bottom of Shorts videos. | 19.05.36 ~ 20.05.46 |
@@ -84,13 +81,13 @@ Report issues [here](https://github.com/inotia00/ReVanced_Extended).
 | `Snack bar components` | Adds options to hide or change components related to the snack bar. | 19.05.36 ~ 20.05.46 |
 | `SponsorBlock` | Adds options to enable and configure SponsorBlock, which can skip undesired video segments, such as sponsored content. | 19.05.36 ~ 20.05.46 |
 | `Spoof app version` | Adds options to spoof the YouTube client version. This can be used to restore old UI elements and features. | 19.43.41 ~ 20.05.46 |
+| `Spoof watch history` | Adds an option to change the domain of the watch history or check its status. | 19.05.36 ~ 20.05.46 |
 | `Swipe controls` | Adds options for controlling volume and brightness with swiping, and whether to enter fullscreen when swiping down below the player. | 19.05.36 ~ 20.05.46 |
 | `Theme` | Changes the app's themes to the values specified in patch options. | 19.05.36 ~ 20.05.46 |
 | `Toolbar components` | Adds options to hide or change components located on the toolbar, such as the search bar, header, and toolbar buttons. | 19.05.36 ~ 20.05.46 |
 | `Translations for YouTube` | Add translations or remove string resources. | 19.05.36 ~ 20.05.46 |
 | `Video playback` | Adds options to customize settings related to video playback, such as default video quality and playback speed. | 19.05.36 ~ 20.05.46 |
 | `Visual preferences icons for YouTube` | Adds icons to specific preferences in the settings. | 19.05.36 ~ 20.05.46 |
-| `Watch history` | Adds an option to change the domain of the watch history or check its status. | 19.05.36 ~ 20.05.46 |
 </details>
 
 ### [📦 `com.google.android.apps.youtube.music`](https://play.google.com/store/apps/details?id=com.google.android.apps.youtube.music)
@@ -159,6 +156,31 @@ Report issues [here](https://github.com/inotia00/ReVanced_Extended).
 | `Remove subreddit dialog` | Adds options to remove the NSFW community warning and notifications suggestion dialogs by dismissing them automatically. | 2024.17.0 ~ 2025.12.1 |
 | `Sanitize sharing links` | Adds an option to sanitize sharing links by removing tracking query parameters. | 2024.17.0 ~ 2025.12.1 |
 | `Settings for Reddit` | Applies mandatory patches to implement ReVanced Extended settings into the application. | 2024.17.0 ~ 2025.12.1 |
+| `Translations for Reddit` | Add translations for RVX settings. | 2024.17.0 ~ 2025.12.1 |
+</details>
+
+### [📦 `com.spotify.music`](https://play.google.com/store/apps/details?id=com.spotify.music)
+<details>
+
+| 💊 Patch | 📜 Description | 🏹 Target Version |
+|:--------:|:--------------:|:-----------------:|
+| `Change lyrics provider` | Changes the lyrics provider to a custom one. | 9.0.90.1229 |
+| `Custom branding name for Spotify` | Changes the Spotify app name to the name specified in patch options. | ALL |
+| `Custom theme` | Applies a custom theme (defaults to amoled black) | 9.0.90.1229 |
+| `Fix Facebook login` | Fix logging in with Facebook when the app is patched by always opening the login in a web browser window. | 9.0.90.1229 |
+| `Fix third party launchers widgets` | Fixes Spotify widgets not working in third party launchers, like Nova Launcher. | 9.0.90.1229 |
+| `Hide Create button` | Hides the "Create" button in the navigation bar. | 9.0.90.1229 |
+| `Lyrics search` | Displays a "Search Lyrics" panel in the Main Activity that searches for lyrics on Google, and song meanings on Songtell. The activity is set to SpotifyMainActivity, so the "Search Lyrics" panel won't be shown in NowPlayingActivity (Player view) or possibly other activities. | 9.0.90.1229 |
+| `Sanitize sharing links` | Removes the tracking query parameters from links before they are shared. | 9.0.90.1229 |
+| `Unlock Premium` | Unlocks Spotify Premium features. Server-sided features like downloading songs are still locked. | 9.0.90.1229 |
+</details>
+
+### [📦 `com.ysy.app.firewall`](https://play.google.com/store/apps/details?id=com.ysy.app.firewall)
+<details>
+
+| 💊 Patch | 📜 Description | 🏹 Target Version |
+|:--------:|:--------------:|:-----------------:|
+| `Unlock Premium` | Unlocks NetWall Premium features once 'Unlock Premium Now' button is clicked. | 1.3.4 |
 </details>
 
 

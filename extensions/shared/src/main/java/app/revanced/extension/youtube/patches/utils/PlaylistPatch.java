@@ -38,6 +38,7 @@ import app.revanced.extension.youtube.settings.Settings;
 import app.revanced.extension.youtube.shared.PlayerType;
 import app.revanced.extension.youtube.shared.VideoInformation;
 import app.revanced.extension.youtube.utils.ExtendedUtils;
+import app.revanced.extension.youtube.utils.GeminiManager;
 import kotlin.Pair;
 
 // TODO: Implement sync queue and clean up code.
@@ -250,6 +251,22 @@ public class PlaylistPatch {
         } catch (Exception ex) {
             Logger.printException(() -> "fetchQueue failure", ex);
         }
+    }
+
+    private static void summarizeVideo() {
+        Context mContext = getContext();
+        if (mContext == null) {
+            handleCheckError(checkFailedQueue);
+            return;
+        }
+        String currentVideoId = videoId;
+        if (StringUtils.isEmpty(currentVideoId)) {
+            handleCheckError(checkFailedVideoId);
+            return;
+        }
+
+        String videoUrl = "https://www.youtube.com/watch?v=" + currentVideoId;
+        GeminiManager.getInstance().startSummarization(mContext, videoUrl);
     }
 
     private static void fetchVideoDetails() {
@@ -488,6 +505,11 @@ public class PlaylistPatch {
                 "yt_outline_bookmark_black_24",
                 PlaylistPatch::saveToPlaylist
         ),
+        SUMMARIZE_VIDEO(
+                "revanced_overlay_button_gemini_summarize",
+                "revanced_gemini_button",
+                PlaylistPatch::summarizeVideo
+        ),
         SHOW_ORIGINAL_VIDEO_INFORMATION(
                 "revanced_queue_manager_show_original_video_information",
                 "quantum_gm_ic_g_translate_black_24",
@@ -521,6 +543,7 @@ public class PlaylistPatch {
                 //REMOVE_QUEUE,
                 EXTERNAL_DOWNLOADER,
                 SAVE_QUEUE,
+                SUMMARIZE_VIDEO,
                 SHOW_ORIGINAL_VIDEO_INFORMATION,
         };
 
@@ -533,6 +556,7 @@ public class PlaylistPatch {
                 //REMOVE_QUEUE,
                 EXTERNAL_DOWNLOADER,
                 SAVE_QUEUE,
+                SUMMARIZE_VIDEO,
                 SHOW_ORIGINAL_VIDEO_INFORMATION,
         };
 
@@ -543,6 +567,7 @@ public class PlaylistPatch {
                 //REMOVE_QUEUE,
                 EXTERNAL_DOWNLOADER,
                 SAVE_QUEUE,
+                SUMMARIZE_VIDEO,
                 SHOW_ORIGINAL_VIDEO_INFORMATION,
         };
 
@@ -554,6 +579,7 @@ public class PlaylistPatch {
                 //REMOVE_QUEUE,
                 EXTERNAL_DOWNLOADER,
                 SAVE_QUEUE,
+                SUMMARIZE_VIDEO,
                 SHOW_ORIGINAL_VIDEO_INFORMATION,
         };
 

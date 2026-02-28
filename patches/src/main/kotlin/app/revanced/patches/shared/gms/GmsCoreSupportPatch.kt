@@ -55,12 +55,13 @@ private const val PACKAGE_NAME_REGEX_PATTERN = "^[a-z]\\w*(\\.[a-z]\\w*)+\$"
 
 private const val GMS_CORE_ORIGINAL_VENDOR_GROUP_ID = "com.google"
 private const val GMS_CORE_REVANCED_VENDOR_GROUP_ID = "app.revanced"
-private const val CLONE_PACKAGE_NAME_YOUTUBE = "com.rvx.android.youtube"
-private const val DEFAULT_PACKAGE_NAME_YOUTUBE = "app.rvx.android.youtube"
+private const val GMS_CORE_VANCED_VENDOR_GROUP_ID = "com.mgoogle"
+private const val CLONE_PACKAGE_NAME_YOUTUBE = "bill.youtube"
+private const val DEFAULT_PACKAGE_NAME_YOUTUBE = "anddea.youtube"
 internal const val ORIGINAL_PACKAGE_NAME_YOUTUBE = "com.google.android.youtube"
 
-private const val CLONE_PACKAGE_NAME_YOUTUBE_MUSIC = "com.rvx.android.apps.youtube.music"
-private const val DEFAULT_PACKAGE_NAME_YOUTUBE_MUSIC = "app.rvx.android.apps.youtube.music"
+private const val CLONE_PACKAGE_NAME_YOUTUBE_MUSIC = "bill.youtube.music"
+private const val DEFAULT_PACKAGE_NAME_YOUTUBE_MUSIC = "anddea.youtube.music"
 internal const val ORIGINAL_PACKAGE_NAME_YOUTUBE_MUSIC =
     "com.google.android.apps.youtube.music"
 
@@ -95,6 +96,7 @@ fun gmsCoreSupportPatch(
             mapOf(
                 "ReVanced MicroG" to GMS_CORE_REVANCED_VENDOR_GROUP_ID,
                 "Original MicroG" to GMS_CORE_ORIGINAL_VENDOR_GROUP_ID,
+                "Vanced MicroG" to GMS_CORE_VANCED_VENDOR_GROUP_ID,
             ),
         title = "GmsCore vendor group ID",
         description = "The vendor's group ID for GmsCore. " +

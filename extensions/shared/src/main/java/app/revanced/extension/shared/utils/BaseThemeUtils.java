@@ -330,4 +330,11 @@ public class BaseThemeUtils {
         }
     }
 
+    /**
+     * Overrides dark mode status as returned by {@link #isDarkModeEnabled()}.
+     */
+    public static void setIsDarkModeEnabled(boolean isDarkMode) {
+        isDarkModeEnabled = isDarkMode;
+        Logger.printDebug(() -> "Dark mode status: " + isDarkMode);
+    }
 }

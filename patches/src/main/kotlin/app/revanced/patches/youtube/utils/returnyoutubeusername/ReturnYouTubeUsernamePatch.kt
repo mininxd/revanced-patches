@@ -11,7 +11,6 @@ import app.revanced.patches.youtube.utils.settings.settingsPatch
 val returnYouTubeUsernamePatch = bytecodePatch(
     RETURN_YOUTUBE_USERNAME.title,
     RETURN_YOUTUBE_USERNAME.summary,
-    false,
 ) {
     compatibleWith(COMPATIBLE_PACKAGE)
 

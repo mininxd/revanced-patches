@@ -14,6 +14,7 @@ private const val APP_NAME = "RVX"
 val customBrandingNamePatch = resourcePatch(
     CUSTOM_BRANDING_NAME_FOR_YOUTUBE.title,
     CUSTOM_BRANDING_NAME_FOR_YOUTUBE.summary,
+    false,
 ) {
     compatibleWith(COMPATIBLE_PACKAGE)
 
@@ -24,9 +25,9 @@ val customBrandingNamePatch = resourcePatch(
         default = APP_NAME,
         values = mapOf(
             "ReVanced Extended" to "ReVanced Extended",
-            "RVX" to "RVX",
+            "RVX" to APP_NAME,
             "YouTube RVX" to "YouTube RVX",
-            "YouTube" to APP_NAME,
+            "YouTube" to "YouTube",
         ),
         title = "App name",
         description = "The name of the app.",

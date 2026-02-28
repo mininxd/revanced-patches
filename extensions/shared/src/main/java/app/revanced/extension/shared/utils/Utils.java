@@ -22,6 +22,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,6 +41,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.widget.Button;
@@ -607,6 +612,7 @@ public class Utils {
 
         DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
         int portraitWidth = Math.min(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        int maxHeight = (int) (displayMetrics.heightPixels * 0.9);
 
         params.width = (int) (portraitWidth * (widthPercentage / 100.0f)); // Set width based on parameters.
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -1197,6 +1203,63 @@ public class Utils {
                 setPreferenceTitlesToMultiLineIfNeeded(subGroup);
             }
         }
+    }
+
+    /**
+     * @return zero, if the resource is not found
+     */
+    @SuppressLint("DiscouragedApi")
+    public static int getResourceIdentifier(@NonNull Context context, @NonNull String resourceIdentifierName, @NonNull String type) {
+        return context.getResources().getIdentifier(resourceIdentifierName, type, context.getPackageName());
+    }
+
+    public static int getResourceIdentifierOrThrow(Context context, String resourceIdentifierName, @Nullable String type) {
+        final int resourceId = getResourceIdentifier(context, resourceIdentifierName, type);
+        if (resourceId == 0) {
+            throw new Resources.NotFoundException("No resource id exists with name: " + resourceIdentifierName
+                    + " type: " + type);
+        }
+        return resourceId;
+    }
+
+    /**
+     * @return zero, if the resource is not found
+     */
+    public static int getResourceIdentifier(@NonNull String resourceIdentifierName, @NonNull String type) {
+        return getResourceIdentifier(getContext(), resourceIdentifierName, type);
+    }
+
+    public static int getResourceIdentifierOrThrow(String resourceIdentifierName, @Nullable String type) {
+        final int resourceId = getResourceIdentifier(getContext(), resourceIdentifierName, type);
+        if (resourceId == 0) {
+            throw new Resources.NotFoundException("No resource id exists with name: " + resourceIdentifierName
+                    + " type: " + type);
+        }
+        return resourceId;
+    }
+
+    public static int getResourceColor(@NonNull String resourceIdentifierName) throws Resources.NotFoundException {
+        //noinspection deprecation
+        return getContext().getResources().getColor(getResourceIdentifier(resourceIdentifierName, "color"));
+    }
+
+    public static int getResourceInteger(@NonNull String resourceIdentifierName) throws Resources.NotFoundException {
+        return getContext().getResources().getInteger(getResourceIdentifier(resourceIdentifierName, "integer"));
+    }
+
+    @NonNull
+    public static Animation getResourceAnimation(@NonNull String resourceIdentifierName) throws Resources.NotFoundException {
+        return AnimationUtils.loadAnimation(getContext(), getResourceIdentifier(resourceIdentifierName, "anim"));
+    }
+
+    /**
+     * Parse a color resource or hex code to an int representation of the color.
+     */
+    public static int getColorFromString(String colorString) throws IllegalArgumentException, Resources.NotFoundException {
+        if (colorString.startsWith("#")) {
+            return Color.parseColor(colorString);
+        }
+        return getResourceColor(colorString);
     }
 
     public static int clamp(int value, int lower, int upper) {

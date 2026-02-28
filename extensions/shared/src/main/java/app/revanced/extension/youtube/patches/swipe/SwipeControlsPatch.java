@@ -67,4 +67,30 @@ public class SwipeControlsPatch {
             return List.of(Settings.SWIPE_VOLUME, Settings.SWIPE_OVERLAY_STYLE);
         }
     }
+
+    public static final class SwipeOverlaySpeedColorAvailability implements Setting.Availability {
+        @Override
+        public boolean isAvailable() {
+            return Settings.SWIPE_SPEED.get() &&
+                    !Settings.SWIPE_OVERLAY_STYLE.get().isLegacy();
+        }
+
+        @Override
+        public List<Setting<?>> getParentSettings() {
+            return List.of(Settings.SWIPE_SPEED, Settings.SWIPE_OVERLAY_STYLE);
+        }
+    }
+
+    public static final class SwipeOverlaySeekColorAvailability implements Setting.Availability {
+        @Override
+        public boolean isAvailable() {
+            return Settings.SWIPE_SEEK.get() &&
+                    !Settings.SWIPE_OVERLAY_STYLE.get().isLegacy();
+        }
+
+        @Override
+        public List<Setting<?>> getParentSettings() {
+            return List.of(Settings.SWIPE_SEEK, Settings.SWIPE_OVERLAY_STYLE);
+        }
+    }
 }

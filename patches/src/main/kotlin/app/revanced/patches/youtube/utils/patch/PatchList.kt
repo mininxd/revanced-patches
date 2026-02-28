@@ -110,8 +110,8 @@ internal enum class PatchList(
         "Adds an option to enable the gradient loading screen."
     ),
     FORCE_HIDE_PLAYER_BUTTONS_BACKGROUND(
-        "Force hide player buttons background",
-        "Removes, at compile time, the dark background surrounding the video player controls."
+        "Force player buttons background",
+        "Changes the dark background surrounding the video player controls at compile time."
     ),
     FULLSCREEN_COMPONENTS(
         "Fullscreen components",
@@ -270,7 +270,7 @@ internal enum class PatchList(
         "Adds icons to specific preferences in the settings."
     ),
     WATCH_HISTORY(
-        "Watch history",
+        "Spoof watch history",
         "Adds an option to change the domain of the watch history or check its status."
     )
 }

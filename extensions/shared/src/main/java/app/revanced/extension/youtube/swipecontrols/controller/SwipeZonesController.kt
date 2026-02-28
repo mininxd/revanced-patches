@@ -5,8 +5,10 @@ import android.view.ViewGroup
 import app.revanced.extension.shared.utils.ResourceUtils.ResourceType
 import app.revanced.extension.shared.utils.ResourceUtils.getIdentifier
 import app.revanced.extension.shared.utils.Utils.dipToPixels
+import app.revanced.extension.youtube.settings.Settings
 import app.revanced.extension.youtube.swipecontrols.SwipeControlsConfigurationProvider
 import app.revanced.extension.youtube.swipecontrols.misc.Rectangle
+import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -40,6 +42,11 @@ class SwipeZonesController(
     private val host: Activity,
     private val fallbackScreenRect: () -> Rectangle,
 ) {
+    /**
+     * Setting to control if `Seek` and `Speed` zones are swapped vertically
+     */
+    private val switchSpeedAndSeek = Settings.SWIPE_SWITCH_SPEED_AND_SEEK.get()
+
     /**
      * 20dp, in pixels
      */
@@ -107,6 +114,69 @@ class SwipeZonesController(
                 eRect.top,
                 zoneWidth,
                 eRect.height,
+            )
+        }
+
+    /**
+     * Additional dead zone applied *inside* the `effectiveSwipeRect` for horizontal swipes
+     * to avoid conflicting with system back gestures.
+     */
+    private val horizontalInnerDeadZone = _40dp // Use 40dp for inner horizontal dead zone
+
+    /** The effective starting X-coordinate for horizontal swipe zones (Seek/Speed). */
+    private val horizontalZoneEffectiveLeft get() = effectiveSwipeRect.left + horizontalInnerDeadZone
+
+    /** The effective width available for horizontal swipe zones after applying inner dead zones. */
+    private val horizontalZoneEffectiveWidth get() = max(0, effectiveSwipeRect.width - (horizontalInnerDeadZone * 2))
+
+    /** The height for each horizontal zone (top/bottom half). */
+    private val horizontalZoneHeight get() = max(0, effectiveSwipeRect.height / 2)
+    private val topHorizontalZoneTop get() = effectiveSwipeRect.top
+    private val bottomHorizontalZoneTop get() = effectiveSwipeRect.top + horizontalZoneHeight
+
+    /**
+     * the rectangle of the speed control zone (horizontal swipe).
+     * Position (top/bottom half) depends on [Settings.SWIPE_SWITCH_SPEED_AND_SEEK].
+     * Includes additional horizontal dead zones for gestures.
+     */
+    val speed: Rectangle
+        get() {
+            val zoneTop = if (switchSpeedAndSeek) {
+                // If switched, speed is in the top half
+                topHorizontalZoneTop
+            } else {
+                // Default, speed is in the bottom half
+                bottomHorizontalZoneTop
+            }
+
+            return Rectangle(
+                horizontalZoneEffectiveLeft,
+                zoneTop,
+                horizontalZoneEffectiveWidth,
+                horizontalZoneHeight
+            )
+        }
+
+    /**
+     * the rectangle of the seek control zone (horizontal swipe).
+     * Position (top/bottom half) depends on [Settings.SWIPE_SWITCH_SPEED_AND_SEEK].
+     * Includes additional horizontal dead zones for gestures.
+     */
+    val seek: Rectangle
+        get() {
+            val zoneTop = if (switchSpeedAndSeek) {
+                // If switched, seek is in the bottom half
+                bottomHorizontalZoneTop
+            } else {
+                // Default, seek is in the top half
+                topHorizontalZoneTop
+            }
+
+            return Rectangle(
+                horizontalZoneEffectiveLeft,
+                zoneTop,
+                horizontalZoneEffectiveWidth,
+                horizontalZoneHeight
             )
         }
 

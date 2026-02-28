@@ -2,6 +2,7 @@ package app.revanced.extension.shared.patches.spoof;
 
 import static app.revanced.extension.shared.innertube.utils.J2V8Support.supportJ2V8;
 import static app.revanced.extension.shared.innertube.utils.StreamingDataOuterClassUtils.prioritizeResolution;
+import static app.revanced.extension.shared.utils.Utils.isSDKAbove;
 
 import android.net.Uri;
 import android.text.TextUtils;
@@ -341,7 +342,11 @@ public class SpoofStreamingDataPatch {
     public static void initializeJavascript() {
         if (SPOOF_STREAMING_DATA_USE_JS) {
             // Download JavaScript and initialize the Cipher class
-            CompletableFuture.runAsync(ThrottlingParameterUtils::initializeJavascript);
+            if (isSDKAbove(24)) {
+                CompletableFuture.runAsync(ThrottlingParameterUtils::initializeJavascript);
+            } else {
+                Utils.runOnBackgroundThread(ThrottlingParameterUtils::initializeJavascript);
+            }
         }
     }
 
@@ -382,6 +387,14 @@ public class SpoofStreamingDataPatch {
         @Override
         public List<Setting<?>> getParentSettings() {
             return List.of(BaseSettings.SPOOF_STREAMING_DATA);
+        }
+    }
+
+    public static final class ClientiOSAvailability implements Setting.Availability {
+        @Override
+        public boolean isAvailable() {
+            return BaseSettings.SPOOF_STREAMING_DATA.get() &&
+                    BaseSettings.SPOOF_STREAMING_DATA_DEFAULT_CLIENT.get().name().equals("IOS_UNPLUGGED");
         }
     }
 

@@ -1,5 +1,6 @@
 package app.revanced.extension.shared.patches;
 
+import static app.revanced.extension.shared.settings.BaseSettings.GMS_SHOW_DIALOG;
 import static app.revanced.extension.shared.utils.StringRef.str;
 import static app.revanced.extension.shared.utils.Utils.isSDKAbove;
 
@@ -64,12 +65,14 @@ public class GmsCoreSupport {
     private static void showBatteryOptimizationDialog(Activity context,
                                                       String dialogMessageRef,
                                                       String positiveButtonTextRef,
-                                                      DialogInterface.OnClickListener onPositiveClickListener) {
+                                                      DialogInterface.OnClickListener onPositiveClickListener,
+                                                      boolean showNegativeButton) {
         // Use a delay to allow the activity to finish initializing.
         // Otherwise, if device is in dark mode the dialog is shown with wrong color scheme.
         Utils.runOnMainThreadDelayed(() -> {
             if (BaseThemeUtils.isSupportModernDialog) {
                 // Create the custom dialog.
+                // CORRECTED
                 Pair<Dialog, LinearLayout> dialogPair = CustomDialog.create(
                         context,
                         // Title.
@@ -80,14 +83,15 @@ public class GmsCoreSupport {
                         null,
                         // OK button text.
                         str(positiveButtonTextRef),
-                        // Convert DialogInterface.OnClickListener to Runnable.
+                        // OK button action
                         () -> onPositiveClickListener.onClick(null, 0),
-                        // No Cancel button action.
+                        // onCancelClick: We don't want a "Cancel" button.
                         null,
-                        // No Neutral button text.
-                        null,
-                        // No Neutral button action.
-                        null,
+                        // neutralButtonText
+                        showNegativeButton ? str("gms_core_dialog_dismiss_text") : null,
+                        // onNeutralClick
+                        showNegativeButton ? () -> GMS_SHOW_DIALOG.save(false) : null,
+
                         // Dismiss dialog when onNeutralClick.
                         true
                 );
@@ -101,12 +105,18 @@ public class GmsCoreSupport {
                 // Show the dialog
                 Utils.showDialog(context, dialog);
             } else {
-                new AlertDialog.Builder(context)
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context)
                         .setIconAttribute(android.R.attr.alertDialogIcon)
                         .setTitle(str("gms_core_dialog_title"))
                         .setMessage(str(dialogMessageRef))
-                        .setPositiveButton(str(positiveButtonTextRef), onPositiveClickListener)
-                        .show();
+                        .setPositiveButton(str(positiveButtonTextRef), onPositiveClickListener);
+
+                if (showNegativeButton) {
+                    dialogBuilder.setNegativeButton(str("gms_core_dialog_dismiss_text"), (dialog, which) -> GMS_SHOW_DIALOG.save(false));
+                }
+
+                dialogBuilder.setCancelable(true);
+                dialogBuilder.show();
             }
         }, 100);
     }
@@ -134,6 +144,7 @@ public class GmsCoreSupport {
                 // opening another activity), then on some devices such as Pixel phone Android 10
                 // no toast will be shown and the app will continually be relaunched
                 // with the appearance of a hung app.
+                return;
             }
 
             // Verify GmsCore is installed.
@@ -155,7 +166,8 @@ public class GmsCoreSupport {
                 showBatteryOptimizationDialog(mActivity,
                         "gms_core_dialog_not_whitelisted_not_allowed_in_background_message",
                         "gms_core_dialog_open_website_text",
-                        (dialog, id) -> open(mActivity, DONT_KILL_MY_APP_LINK));
+                        (dialog, id) -> open(mActivity, DONT_KILL_MY_APP_LINK),
+                        false);
                 return;
             }
 
@@ -166,10 +178,13 @@ public class GmsCoreSupport {
                 Logger.printDebug(() -> "Device is Android Automotive");
             } else if (batteryOptimizationsEnabled(mActivity)) {
                 Logger.printInfo(() -> "GmsCore is not whitelisted from battery optimizations");
-                showBatteryOptimizationDialog(mActivity,
-                        "gms_core_dialog_not_whitelisted_using_battery_optimizations_message",
-                        "gms_core_dialog_continue_text",
-                        (dialog, id) -> openGmsCoreDisableBatteryOptimizationsIntent(mActivity));
+                if (GMS_SHOW_DIALOG.get()) {
+                    showBatteryOptimizationDialog(mActivity,
+                            "gms_core_dialog_not_whitelisted_using_battery_optimizations_message",
+                            "gms_core_dialog_continue_text",
+                            (dialog, id) -> openGmsCoreDisableBatteryOptimizationsIntent(mActivity),
+                            true);
+                }
             }
         } catch (Exception ex) {
             Logger.printException(() -> "checkGmsCore failure", ex);

@@ -1,6 +1,7 @@
 package app.revanced.extension.youtube.patches.shorts;
 
 import static app.revanced.extension.shared.utils.ResourceUtils.getString;
+import static app.revanced.extension.shared.utils.StringRef.str;
 import static app.revanced.extension.youtube.patches.components.ShortsCustomActionsFilter.isShortsFlyoutMenuVisible;
 import static app.revanced.extension.youtube.shared.RootView.isShortsActive;
 import static app.revanced.extension.youtube.utils.ExtendedUtils.isSpoofingToLessThan;
@@ -8,6 +9,7 @@ import static app.revanced.extension.youtube.utils.ExtendedUtils.isSpoofingToLes
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import app.revanced.extension.youtube.utils.GeminiManager;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.ref.WeakReference;
@@ -322,6 +325,30 @@ public final class CustomActionsPatch {
                 Settings.SHORTS_CUSTOM_ACTIONS_SPEED_DIALOG,
                 "yt_outline_play_arrow_half_circle_black_24",
                 () -> VideoUtils.showPlaybackSpeedDialog(contextRef.get(), Settings.SHORTS_CUSTOM_ACTIONS_SPEED_DIALOG_TYPE)
+        ),
+        GEMINI(
+                Settings.SHORTS_CUSTOM_ACTIONS_GEMINI,
+                "revanced_gemini_button",
+                () -> {
+                    Context context = contextRef.get();
+
+                    String shortsVideoId = ShortsCustomActionsFilter.getShortsVideoId();
+                    String videoUrl;
+                    if (!TextUtils.isEmpty(shortsVideoId)) {
+                        videoUrl = VideoUtils.getVideoUrl(shortsVideoId, false);
+                    } else {
+                        // Fallback to general video URL if shorts ID not found (might be less reliable in shorts)
+                        videoUrl = VideoUtils.getVideoUrl(false);
+                        Logger.printInfo(() -> "GEMINI CustomAction: Could not get Shorts specific Video ID, using general VideoUtils.");
+                    }
+
+                    if (TextUtils.isEmpty(videoUrl) || videoUrl.equals(VideoUtils.VIDEO_URL)) {
+                        Utils.showToastShort(str("revanced_gemini_error_no_video"));
+                        return;
+                    }
+
+                    GeminiManager.getInstance().startSummarization(context, videoUrl);
+                }
         ),
         REPEAT_STATE(
                 Settings.SHORTS_CUSTOM_ACTIONS_REPEAT_STATE,

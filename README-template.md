@@ -3,17 +3,14 @@
 
     
 ## 🧩 ReVanced Extended Patches
-ReVanced Extended Patches. 
-    
-[![Static Badge](https://img.shields.io/badge/RVX_Documentation-gray?style=flat-square&logo=github)](https://github.com/inotia00/revanced-documentation#readme)   [![Static Badge](https://img.shields.io/badge/Reddit-gray?style=flat-square&logo=reddit)](https://reddit.com/r/revancedextended)   [![Static Badge](https://img.shields.io/badge/Discord-gray?style=flat-square&logo=discord)](https://discord.gg/yMnc3EywRZ)
+[![Static Badge](https://img.shields.io/badge/RVX_Wiki-gray?logo=github)](https://github.com/anddea/revanced-patches/wiki)   [![Static Badge](https://img.shields.io/badge/Translations-gray?logo=crowdin)](https://rvxtranslate.netlify.app/)
 <br>
-[![Static Badge](https://img.shields.io/badge/Telegram-Announcements-gray?style=flat-square&logo=telegram&color=%2326A5E4)](https://t.me/revanced_extended)   [![Static Badge](https://img.shields.io/badge/Telegram-Chat-gray?style=flat-square&logo=telegram&color=%2326A5E4)](https://t.me/revanced_extended_chat)   [![Static Badge](https://img.shields.io/badge/Telegram-GitHub_Notifications-gray?style=flat-square&logo=telegram&color=%2326A5E4)](https://t.me/revanced_extended_repo)
-<br>
-[![Static Badge](https://img.shields.io/badge/Translations-YouTube-gray?style=flat-square&logo=crowdin&color=%23f5f5f5)](https://crowdin.com/project/revancedextended)   [![Static Badge](https://img.shields.io/badge/Translations-YT_Music-gray?style=flat-square&logo=crowdin&color=%23f5f5f5)](https://crowdin.com/project/revancedmusicextended)
-<br>
-</div> 
+[![Static Badge](https://img.shields.io/badge/Telegram-Community-gray?logo=telegram&color=%2326A5E4)](https://t.me/AnddeaChat)   [![Static Badge](https://img.shields.io/badge/Reddit-RVX-gray?logo=reddit&color=red)](https://reddit.com/r/revancedextended)   [![Static Badge](https://img.shields.io/badge/Reddit-YTAdvanced-gray?logo=reddit&color=yellow)](https://www.reddit.com/r/YTadvanced)
+</div>
 
-See the [documentation](https://github.com/inotia00/revanced-documentation#readme) to learn how to apply patches and build ReVanced Extended apps.
+## Documentation
+
+Check the [wiki](https://github.com/anddea/revanced-patches/wiki) for resources on patching, customization, and debugging.
 
 Report issues [here](https://github.com/inotia00/ReVanced_Extended).
 

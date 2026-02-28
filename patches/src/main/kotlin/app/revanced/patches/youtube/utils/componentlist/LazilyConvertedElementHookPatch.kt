@@ -4,17 +4,12 @@ import app.revanced.patcher.extensions.InstructionExtensions.addInstruction
 import app.revanced.patcher.extensions.InstructionExtensions.getInstruction
 import app.revanced.patcher.patch.bytecodePatch
 import app.revanced.patcher.util.proxy.mutableTypes.MutableMethod
-import app.revanced.patches.shared.conversionContextFingerprintToString
-import app.revanced.patches.shared.litho.componentContextSubParserFingerprint
+import app.revanced.patches.shared.conversionContextFingerprintToString2
+import app.revanced.patches.shared.litho.componentContextSubParserFingerprint2
 import app.revanced.patches.youtube.utils.extension.Constants.UTILS_PATH
 import app.revanced.patches.youtube.utils.extension.sharedExtensionPatch
-import app.revanced.util.addInstructionsAtControlFlowLabel
-import app.revanced.util.findFreeRegister
+import app.revanced.util.*
 import app.revanced.util.fingerprint.methodOrThrow
-import app.revanced.util.getReference
-import app.revanced.util.indexOfFirstInstructionOrThrow
-import app.revanced.util.indexOfFirstInstructionReversedOrThrow
-import app.revanced.util.indexOfFirstStringInstructionOrThrow
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
@@ -33,8 +28,8 @@ val lazilyConvertedElementHookPatch = bytecodePatch(
     dependsOn(sharedExtensionPatch)
 
     execute {
-        componentListFingerprint.methodOrThrow(componentContextSubParserFingerprint).apply {
-            val identifierReference = with(conversionContextFingerprintToString.methodOrThrow()) {
+        componentListFingerprint.methodOrThrow(componentContextSubParserFingerprint2).apply {
+            val identifierReference = with(conversionContextFingerprintToString2.methodOrThrow()) {
                 val identifierStringIndex =
                     indexOfFirstStringInstructionOrThrow(", identifierProperty=")
                 val identifierStringAppendIndex =

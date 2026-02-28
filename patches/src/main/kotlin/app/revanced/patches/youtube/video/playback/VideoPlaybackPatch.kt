@@ -4,6 +4,7 @@ import app.revanced.patcher.extensions.InstructionExtensions.addInstruction
 import app.revanced.patcher.extensions.InstructionExtensions.addInstructions
 import app.revanced.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.revanced.patcher.extensions.InstructionExtensions.getInstruction
+import app.revanced.patcher.patch.PatchException
 import app.revanced.patcher.patch.bytecodePatch
 import app.revanced.patcher.util.smali.ExternalLabel
 import app.revanced.patches.shared.customspeed.customPlaybackSpeedPatch
@@ -11,6 +12,7 @@ import app.revanced.patches.shared.drc.drcAudioPatch
 import app.revanced.patches.shared.litho.addLithoFilter
 import app.revanced.patches.shared.litho.lithoFilterPatch
 import app.revanced.patches.shared.opus.baseOpusCodecsPatch
+import app.revanced.patches.youtube.utils.auth.authHookPatch
 import app.revanced.patches.youtube.utils.compatibility.Constants.COMPATIBLE_PACKAGE
 import app.revanced.patches.youtube.utils.extension.Constants.COMPONENTS_PATH
 import app.revanced.patches.youtube.utils.extension.Constants.PATCH_STATUS_CLASS_DESCRIPTOR
@@ -20,14 +22,12 @@ import app.revanced.patches.youtube.utils.fix.shortsplayback.shortsPlaybackPatch
 import app.revanced.patches.youtube.utils.flyoutmenu.flyoutMenuHookPatch
 import app.revanced.patches.youtube.utils.patch.PatchList.VIDEO_PLAYBACK
 import app.revanced.patches.youtube.utils.playertype.playerTypeHookPatch
+import app.revanced.patches.youtube.utils.playservice.is_20_14_or_greater
 import app.revanced.patches.youtube.utils.playservice.is_19_30_or_greater
 import app.revanced.patches.youtube.utils.playservice.versionCheckPatch
 import app.revanced.patches.youtube.utils.qualityMenuViewInflateFingerprint
 import app.revanced.patches.youtube.utils.recyclerview.recyclerViewTreeObserverHook
 import app.revanced.patches.youtube.utils.recyclerview.recyclerViewTreeObserverPatch
-import app.revanced.patches.youtube.utils.request.buildRequestPatch
-import app.revanced.patches.youtube.utils.request.hookBuildRequest
-import app.revanced.patches.youtube.utils.request.hookInitPlaybackBuildRequest
 import app.revanced.patches.youtube.utils.resourceid.sharedResourceIdPatch
 import app.revanced.patches.youtube.utils.settings.ResourceUtils.addPreference
 import app.revanced.patches.youtube.utils.settings.settingsPatch
@@ -35,13 +35,14 @@ import app.revanced.patches.youtube.video.information.hookBackgroundPlayVideoInf
 import app.revanced.patches.youtube.video.information.hookVideoInformation
 import app.revanced.patches.youtube.video.information.speedSelectionInsertMethod
 import app.revanced.patches.youtube.video.information.videoInformationPatch
+import app.revanced.patches.youtube.video.videoid.hookPlayerResponseVideoId
 import app.revanced.patches.youtube.video.videoid.videoIdPatch
+import app.revanced.util.fingerprint.*
 import app.revanced.util.findMethodOrThrow
 import app.revanced.util.fingerprint.definingClassOrThrow
 import app.revanced.util.fingerprint.matchOrThrow
 import app.revanced.util.fingerprint.methodOrThrow
 import app.revanced.util.getReference
-import app.revanced.util.indexOfFirstInstruction
 import app.revanced.util.indexOfFirstInstructionOrThrow
 import app.revanced.util.indexOfFirstInstructionReversedOrThrow
 import app.revanced.util.updatePatchStatus
@@ -84,12 +85,12 @@ val videoPlaybackPatch = bytecodePatch(
             "$VIDEO_PATH/CustomPlaybackSpeedPatch;",
             8.0f
         ),
+        authHookPatch,
         baseOpusCodecsPatch(),
         drcAudioPatch { is_19_30_or_greater },
         flyoutMenuHookPatch,
         lithoFilterPatch,
         lithoLayoutPatch,
-        buildRequestPatch,
         disableHdrPatch,
         playerTypeHookPatch,
         recyclerViewTreeObserverPatch,
@@ -137,38 +138,52 @@ val videoPlaybackPatch = bytecodePatch(
             }
         }
 
-        mediaLibPlayerLoadVideoFingerprint.matchOrThrow().let {
-            it.method.apply {
-                val startIndex = it.patternMatch!!.endIndex
-                val targetIndex = indexOfPlaybackSpeedInstruction(this, startIndex)
-                val targetReference =
-                    getInstruction<ReferenceInstruction>(targetIndex).reference as FieldReference
+        if (is_20_14_or_greater) {
+            pcmGetterMethodFingerprint.mutableClassOrThrow().let {
+                val targetMethod =
+                    it.methods.find { method -> method.returnType == "F" && method.parameters.isEmpty() }
+                        ?: throw PatchException("Method returning playback speed not found in class $it.") as Throwable
 
-                findMethodOrThrow(targetReference.definingClass) {
-                    returnType == "F" &&
-                            indexOfFirstInstruction {
-                                opcode == Opcode.IGET &&
-                                        getReference<FieldReference>() == targetReference
-                            } >= 0
-                }.apply {
+                targetMethod.apply {
                     val insertIndex = implementation!!.instructions.lastIndex
-                    val insertRegister =
-                        getInstruction<OneRegisterInstruction>(insertIndex).registerA
+                    val insertRegister = getInstruction<OneRegisterInstruction>(insertIndex).registerA
 
                     addInstructions(
                         insertIndex, """
+                        invoke-static {v$insertRegister}, $EXTENSION_PLAYBACK_SPEED_CLASS_DESCRIPTOR->getPlaybackSpeed(F)F
+                        move-result v$insertRegister
+                        """
+                    )
+                }
+            }
+        } else {
+            loadVideoParamsFingerprint.matchOrThrow(loadVideoParamsParentFingerprint).let {
+                it.method.apply {
+                    val targetIndex = it.patternMatch!!.endIndex
+                    val targetReference =
+                        getInstruction<ReferenceInstruction>(targetIndex).reference as MethodReference
+
+                    findMethodOrThrow(definingClass) {
+                        name == targetReference.name
+                    }.apply {
+                        val insertIndex = implementation!!.instructions.lastIndex
+                        val insertRegister =
+                            getInstruction<OneRegisterInstruction>(insertIndex).registerA
+
+                        addInstructions(
+                            insertIndex, """
                             invoke-static {v$insertRegister}, $EXTENSION_PLAYBACK_SPEED_CLASS_DESCRIPTOR->getPlaybackSpeed(F)F
                             move-result v$insertRegister
                             """
-                    )
+                        )
+                    }
                 }
             }
         }
 
         hookBackgroundPlayVideoInformation("$EXTENSION_PLAYBACK_SPEED_CLASS_DESCRIPTOR->newVideoStarted(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JZ)V")
         hookVideoInformation("$EXTENSION_PLAYBACK_SPEED_CLASS_DESCRIPTOR->newVideoStarted(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JZ)V")
-        hookBuildRequest("$EXTENSION_PLAYBACK_SPEED_CLASS_DESCRIPTOR->fetchRequest(Ljava/lang/String;Ljava/util/Map;)V")
-        hookInitPlaybackBuildRequest("$EXTENSION_PLAYBACK_SPEED_CLASS_DESCRIPTOR->fetchRequest(Ljava/lang/String;Ljava/util/Map;)V")
+        hookPlayerResponseVideoId("$EXTENSION_PLAYBACK_SPEED_CLASS_DESCRIPTOR->fetchRequest(Ljava/lang/String;Z)V")
 
         updatePatchStatus(PATCH_STATUS_CLASS_DESCRIPTOR, "VideoPlayback")
 
@@ -178,11 +193,23 @@ val videoPlaybackPatch = bytecodePatch(
 
         qualityChangedFromRecyclerViewFingerprint.matchOrThrow().let {
             it.method.apply {
-                val index = it.patternMatch!!.startIndex
-                val register = getInstruction<TwoRegisterInstruction>(index).registerA
+                val instructions = implementation?.instructions ?: throw IllegalStateException("Method implementation not found")
+                val newInstanceIndex = instructions.indexOfFirst { instruction ->
+                    instruction.opcode == Opcode.NEW_INSTANCE &&
+                            (instruction as? ReferenceInstruction)?.reference?.toString() == "Lcom/google/android/libraries/youtube/innertube/model/media/VideoQuality;"
+                }
+                if (newInstanceIndex == -1) throw IllegalStateException("VideoQuality new-instance not found")
 
+                val igetIndex = instructions.subList(newInstanceIndex, instructions.size).indexOfFirst { instruction ->
+                    instruction.opcode == Opcode.IGET &&
+                            (instruction as? ReferenceInstruction)?.reference is FieldReference &&
+                            (instruction.reference as FieldReference).type == "I"
+                }.let { index -> if (index == -1) -1 else index + newInstanceIndex }
+                if (igetIndex == -1) throw IllegalStateException("IGET instruction for integer field not found")
+
+                val register = getInstruction<TwoRegisterInstruction>(igetIndex).registerA
                 addInstruction(
-                    index + 1,
+                    igetIndex + 1,
                     "invoke-static { v$register }, $EXTENSION_VIDEO_QUALITY_CLASS_DESCRIPTOR->userChangedQualityInNewFlyout(I)V"
                 )
             }

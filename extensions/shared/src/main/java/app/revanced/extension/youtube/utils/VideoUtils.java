@@ -79,6 +79,7 @@ import app.revanced.extension.youtube.patches.video.VideoQualityPatch;
 import app.revanced.extension.youtube.patches.video.VideoQualityPatch.VideoQualityMenuInterface;
 import app.revanced.extension.youtube.settings.Settings;
 import app.revanced.extension.youtube.settings.preference.ExternalDownloaderPlaylistPreference;
+import app.revanced.extension.youtube.settings.preference.ExternalDownloaderVideoLongPressPreference;
 import app.revanced.extension.youtube.settings.preference.ExternalDownloaderVideoPreference;
 import app.revanced.extension.youtube.shared.PlaylistIdPrefix;
 import app.revanced.extension.youtube.shared.RootView;
@@ -97,7 +98,7 @@ public class VideoUtils extends IntentUtils {
 
     private static final String CHANNEL_URL = "https://www.youtube.com/channel/";
     private static final String PLAYLIST_URL = "https://www.youtube.com/playlist?list=";
-    private static final String VIDEO_URL = "https://youtu.be/";
+    public static final String VIDEO_URL = "https://youtu.be/";
     private static final String VIDEO_SCHEME_INTENT_FORMAT = "vnd.youtube://%s?start=%d";
     private static final String VIDEO_SCHEME_LINK_FORMAT = "https://youtu.be/%s?t=%d";
     private static final String DEFAULT_YOUTUBE_VIDEO_QUALITY_STRING = getString("quality_auto");
@@ -122,7 +123,7 @@ public class VideoUtils extends IntentUtils {
         return getVideoUrl(videoId, false);
     }
 
-    private static String getVideoUrl(boolean withTimestamp) {
+    public static String getVideoUrl(boolean withTimestamp) {
         return getVideoUrl(VideoInformation.getVideoId(), withTimestamp);
     }
 
@@ -171,6 +172,27 @@ public class VideoUtils extends IntentUtils {
             final String downloaderPackageName = Settings.EXTERNAL_DOWNLOADER_PACKAGE_NAME_VIDEO.get();
             // If the package is not installed, show a dialog.
             if (ExternalDownloaderVideoPreference.showDialogIfAppIsNotInstalled(RootView.getContext(), downloaderPackageName)) {
+                return;
+            }
+
+            isExternalDownloaderLaunched.compareAndSet(false, true);
+            launchExternalDownloader(getVideoUrl(videoId), downloaderPackageName);
+        } catch (Exception ex) {
+            Logger.printException(() -> "launchExternalDownloader failure", ex);
+        } finally {
+            runOnMainThreadDelayed(() -> isExternalDownloaderLaunched.compareAndSet(true, false), 500);
+        }
+    }
+
+    public static void launchLongPressVideoExternalDownloader() {
+        launchLongPressVideoExternalDownloader(VideoInformation.getVideoId());
+    }
+
+    public static void launchLongPressVideoExternalDownloader(@NonNull String videoId) {
+        try {
+            final String downloaderPackageName = Settings.EXTERNAL_DOWNLOADER_PACKAGE_NAME_VIDEO_LONG_PRESS.get();
+            // If the package is not installed, show a dialog.
+            if (ExternalDownloaderVideoLongPressPreference.showDialogIfAppIsNotInstalled(RootView.getContext(), downloaderPackageName)) {
                 return;
             }
 

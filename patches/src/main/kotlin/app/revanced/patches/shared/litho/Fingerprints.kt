@@ -1,13 +1,73 @@
 package app.revanced.patches.shared.litho
 
-import app.revanced.util.containsLiteralInstruction
+import app.revanced.patcher.fingerprint
+import app.revanced.util.*
 import app.revanced.util.fingerprint.legacyFingerprint
-import app.revanced.util.getReference
-import app.revanced.util.indexOfFirstInstruction
-import app.revanced.util.or
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
+
+internal val componentContextParserFingerprint = fingerprint {
+    strings("Number of bits must be positive")
+}
+
+internal val componentContextSubParserFingerprint2 = legacyFingerprint(
+    name = "componentContextSubParserFingerprint2",
+    returnType = "L",
+    strings = listOf("Number of bits must be positive"),
+)
+
+internal val lithoFilterFingerprint = fingerprint {
+    accessFlags(AccessFlags.STATIC, AccessFlags.CONSTRUCTOR)
+    custom { _, classDef ->
+        classDef.endsWith("/LithoFilterPatch;")
+    }
+}
+
+internal val emptyComponentFingerprint = fingerprint {
+    accessFlags(AccessFlags.PRIVATE, AccessFlags.CONSTRUCTOR)
+    parameters()
+    strings("EmptyComponent")
+    custom { _, classDef ->
+        classDef.methods.filter { AccessFlags.STATIC.isSet(it.accessFlags) }.size == 1
+    }
+}
+
+internal val lithoComponentNameUpbFeatureFlagFingerprint = fingerprint {
+    accessFlags(AccessFlags.PUBLIC, AccessFlags.FINAL)
+    returns("Z")
+    parameters()
+    literal { 45631264L }
+}
+
+internal val lithoConverterBufferUpbFeatureFlagFingerprint = fingerprint {
+    returns("L")
+    literal { 45419603L }
+}
+
+internal val conversionContextFingerprintToString = fingerprint {
+    parameters()
+    strings(
+        "ConversionContext{containerInternal=",
+        ", widthConstraint=",
+        ", heightConstraint=",
+        ", templateLoggerFactory=",
+        ", rootDisposableContainer=",
+        ", identifierProperty="
+    )
+}
+
+internal val protobufBufferReferenceLegacyFingerprint = fingerprint {
+    accessFlags(AccessFlags.PUBLIC, AccessFlags.FINAL)
+    returns("V")
+    parameters("I", "Ljava/nio/ByteBuffer;")
+    opcodes(
+        Opcode.IPUT,
+        Opcode.INVOKE_VIRTUAL,
+        Opcode.MOVE_RESULT,
+        Opcode.SUB_INT_2ADDR,
+    )
+}
 
 internal const val BUFFER_UPD_FEATURE_FLAG = 45419603L
 
@@ -49,8 +109,8 @@ internal val byteBufferFingerprint = legacyFingerprint(
     },
 )
 
-internal val emptyComponentFingerprint = legacyFingerprint(
-    name = "emptyComponentFingerprint",
+internal val emptyComponentFingerprint2 = legacyFingerprint(
+    name = "emptyComponentFingerprint2",
     accessFlags = AccessFlags.PRIVATE or AccessFlags.CONSTRUCTOR,
     parameters = emptyList(),
     strings = listOf("EmptyComponent"),
@@ -59,8 +119,8 @@ internal val emptyComponentFingerprint = legacyFingerprint(
     }
 )
 
-internal val componentContextParserFingerprint = legacyFingerprint(
-    name = "componentContextParserFingerprint",
+internal val componentContextParserFingerprint2 = legacyFingerprint(
+    name = "componentContextParserFingerprint2",
     strings = listOf("Number of bits must be positive"),
 )
 
@@ -100,15 +160,6 @@ internal val lithoThreadExecutorFingerprint = legacyFingerprint(
         classDef.superclass == "Ljava/util/concurrent/ThreadPoolExecutor;" &&
                 method.containsLiteralInstruction(1L) // 1L = default thread timeout.
     }
-)
-
-/**
- * Since YouTube v19.18.41 and YT Music 7.01.53, pathBuilder is being handled by a different Method.
- */
-internal val componentContextSubParserFingerprint = legacyFingerprint(
-    name = "componentContextSubParserFingerprint",
-    returnType = "L",
-    strings = listOf("Number of bits must be positive"),
 )
 
 internal const val PATH_UPD_FEATURE_FLAG = 45631264L

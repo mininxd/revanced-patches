@@ -1,20 +1,19 @@
 package app.revanced.patches.youtube.utils.settings
 
+import app.revanced.patcher.fingerprint
 import app.revanced.patches.youtube.utils.resourceid.appearance
 import app.revanced.util.fingerprint.legacyFingerprint
 import app.revanced.util.or
 import com.android.tools.smali.dexlib2.AccessFlags
 
-internal val clientContextBodyBuilderFingerprint = legacyFingerprint(
-    name = "clientContextBodyBuilderFingerprint",
-    returnType = "V",
-    accessFlags = AccessFlags.PUBLIC or AccessFlags.FINAL,
-    parameters = listOf("L"),
-    strings = listOf(
-        "country",
-        "\u200e\u200f\u200e\u200e",
-    )
-)
+internal val licenseActivityOnCreateFingerprint = fingerprint {
+    accessFlags(AccessFlags.PUBLIC, AccessFlags.FINAL)
+    returns("V")
+    parameters("L")
+    custom { method, classDef ->
+        classDef.endsWith("LicenseActivity;") && method.name == "onCreate"
+    }
+}
 
 internal val settingsFragmentStylePrimaryFingerprint = legacyFingerprint(
     name = "settingsFragmentStylePrimaryFingerprint",
@@ -72,15 +71,11 @@ internal val licenseMenuActivityOnCreateFingerprint = legacyFingerprint(
     }
 )
 
-internal val userInterfaceThemeEnumFingerprint = legacyFingerprint(
-    name = "userInterfaceThemeEnumFingerprint",
+internal val proxyBillingActivityV2OnCreateFingerprint = legacyFingerprint(
+    name = "proxyBillingActivityV2OnCreateFingerprint",
     returnType = "V",
-    strings = listOf(
-        "USER_INTERFACE_THEME_UNKNOWN",
-        "USER_INTERFACE_THEME_LIGHT",
-        "USER_INTERFACE_THEME_DARK",
-    ),
-    customFingerprint = { method, _ ->
-        method.name == "<clinit>"
+    parameters = listOf("Landroid/os/Bundle;"),
+    customFingerprint = { method, classDef ->
+        classDef.endsWith("/ProxyBillingActivityV2;") && method.name == "onCreate"
     }
 )

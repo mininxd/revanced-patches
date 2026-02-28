@@ -34,22 +34,8 @@ import app.revanced.patches.youtube.utils.fix.endscreensuggestedvideo.endScreenS
 import app.revanced.patches.youtube.utils.fix.litho.lithoLayoutPatch
 import app.revanced.patches.youtube.utils.patch.PatchList.PLAYER_COMPONENTS
 import app.revanced.patches.youtube.utils.playertype.playerTypeHookPatch
-import app.revanced.patches.youtube.utils.playservice.is_18_39_or_greater
-import app.revanced.patches.youtube.utils.playservice.is_19_18_or_greater
-import app.revanced.patches.youtube.utils.playservice.is_19_43_or_greater
-import app.revanced.patches.youtube.utils.playservice.is_20_02_or_greater
-import app.revanced.patches.youtube.utils.playservice.is_20_03_or_greater
-import app.revanced.patches.youtube.utils.playservice.is_20_05_or_greater
-import app.revanced.patches.youtube.utils.playservice.is_20_09_or_greater
-import app.revanced.patches.youtube.utils.playservice.is_20_12_or_greater
-import app.revanced.patches.youtube.utils.playservice.versionCheckPatch
-import app.revanced.patches.youtube.utils.resourceid.darkBackground
-import app.revanced.patches.youtube.utils.resourceid.eduOverlayStub
-import app.revanced.patches.youtube.utils.resourceid.fadeDurationFast
-import app.revanced.patches.youtube.utils.resourceid.scrimOverlay
-import app.revanced.patches.youtube.utils.resourceid.seekUndoEduOverlayStub
-import app.revanced.patches.youtube.utils.resourceid.sharedResourceIdPatch
-import app.revanced.patches.youtube.utils.resourceid.tapBloomView
+import app.revanced.patches.youtube.utils.playservice.*
+import app.revanced.patches.youtube.utils.resourceid.*
 import app.revanced.patches.youtube.utils.settings.ResourceUtils.addPreference
 import app.revanced.patches.youtube.utils.settings.settingsPatch
 import app.revanced.patches.youtube.utils.youtubeControlsOverlayFingerprint
@@ -720,7 +706,7 @@ val playerComponentsPatch = bytecodePatch(
                 removeInstruction(insertIndex)
             }
         } else if (is_20_05_or_greater) {
-            // This is a new film strip overlay added to YouTube 20.05+
+            // This is a new filmstrip overlay added to YouTube 20.05+
             // Disabling this flag is not related to the operation of the patch.
             filmStripOverlayConfigV2Fingerprint.injectLiteralInstructionBooleanCall(
                 FILM_STRIP_OVERLAY_V2_FEATURE_FLAG,
@@ -776,13 +762,29 @@ val playerComponentsPatch = bytecodePatch(
 
         if (!is_20_03_or_greater) {
             seekEduContainerFingerprint.methodOrThrow().apply {
-                addInstructionsWithLabels(
-                    0, """
+                val (register, condition, insertIndex) = when {
+                is_20_18_or_greater && !is_20_19_or_greater -> {
+                    Triple("v2", "if-nez", 0)
+                }
+
+                !is_20_14_or_greater || (is_20_15_or_greater && !is_20_16_or_greater) -> {
+                    Triple("v0", "if-eqz", 0)
+                }
+
+                else -> {
+                    Triple("v0", "if-eqz", 1)
+                }
+            }
+            val labelInstruction = getInstruction(insertIndex)
+            addInstructionsWithLabels(
+                insertIndex,
+                """
                     invoke-static {}, $PLAYER_CLASS_DESCRIPTOR->hideSeekMessage()Z
-                    move-result v0
-                    if-eqz v0, :default
+                    move-result $register
+                    $condition $register, :default
                     return-void
-                    """, ExternalLabel("default", getInstruction(0))
+                """,
+                ExternalLabel("default", labelInstruction)
                 )
             }
 

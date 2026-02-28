@@ -72,7 +72,6 @@ object ExternalDownloadButton {
     }
 
     private fun onLongClick(view: View) {
-        VideoUtils.launchVideoExternalDownloader()
+        VideoUtils.launchLongPressVideoExternalDownloader()
     }
-
 }

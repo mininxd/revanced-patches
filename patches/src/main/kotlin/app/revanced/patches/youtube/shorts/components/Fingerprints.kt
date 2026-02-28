@@ -1,5 +1,7 @@
 package app.revanced.patches.youtube.shorts.components
 
+import app.revanced.patcher.extensions.InstructionExtensions.instructionsOrNull
+import app.revanced.patcher.fingerprint
 import app.revanced.patches.youtube.utils.resourceid.reelDynRemix
 import app.revanced.patches.youtube.utils.resourceid.reelDynShare
 import app.revanced.patches.youtube.utils.resourceid.reelFeedbackLike
@@ -13,10 +15,12 @@ import app.revanced.patches.youtube.utils.resourceid.rightComment
 import app.revanced.util.fingerprint.legacyFingerprint
 import app.revanced.util.getReference
 import app.revanced.util.indexOfFirstInstruction
+import app.revanced.util.literal
 import app.revanced.util.or
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
@@ -104,6 +108,47 @@ internal val reelPlaybackRepeatFingerprint = legacyFingerprint(
     returnType = "V",
     parameters = listOf("L"),
     strings = listOf("YoutubePlayerState is in throwing an Error.")
+)
+
+/**
+ * YouTube 20.16+
+ */
+// internal val reelPlaybackRepeatFingerprint2016 = fingerprint {
+//     returns("V")
+//     parameters("L")
+//     opcodes(
+//         Opcode.INVOKE_STATIC,
+//         Opcode.MOVE_RESULT_OBJECT,
+//         Opcode.IPUT_OBJECT
+//     )
+//     custom { _, classDef ->
+//         classDef.methods.any { classMethod ->
+//             classMethod.instructionsOrNull?.any { instruction ->
+//                 instruction.opcode == Opcode.CONST_STRING &&
+//                         (instruction as? ReferenceInstruction)?.reference?.toString() == "Reels[%s] Playback Time: %d ms"
+//             } == true
+//         }
+//     }
+// }
+
+internal val reelPlaybackRepeatFingerprint2016 = legacyFingerprint(
+    name = "reelPlaybackRepeatFingerprint2016",
+    accessFlags = AccessFlags.PUBLIC or AccessFlags.FINAL,
+    parameters = listOf("L"),
+    returnType = "V",
+    opcodes = listOf(
+        Opcode.INVOKE_STATIC,
+        Opcode.MOVE_RESULT_OBJECT,
+        Opcode.IPUT_OBJECT
+    ),
+    customFingerprint = { _, classDef ->
+        classDef.methods.any { classMethod ->
+            classMethod.instructionsOrNull?.any { instruction ->
+                instruction.opcode == Opcode.CONST_STRING &&
+                        (instruction as? ReferenceInstruction)?.reference?.toString() == "Reels[%s] Playback Time: %d ms"
+            } == true
+        }
+    }
 )
 
 internal val reelPlaybackFingerprint = legacyFingerprint(
@@ -277,20 +322,20 @@ internal val shortsFullscreenFeatureFingerprint = legacyFingerprint(
     literals = listOf(FULLSCREEN_FEATURE_FLAG),
 )
 
-internal const val SHORTS_EXPERIMENTAL_PLAYER_FEATURE_FLAG = 45677719L
+internal val shortsExperimentalPlayerFeatureFlagFingerprint = fingerprint {
+    accessFlags(AccessFlags.PUBLIC, AccessFlags.FINAL)
+    returns("Z")
+    parameters()
+    literal {
+        45677719L
+    }
+}
 
-internal val shortsExperimentalPlayerFeatureFlagFingerprint = legacyFingerprint(
-    name = "shortsExperimentalPlayerFeatureFlagFingerprint",
-    accessFlags = AccessFlags.PUBLIC or AccessFlags.FINAL,
-    returnType = "Z",
-    literals = listOf(SHORTS_EXPERIMENTAL_PLAYER_FEATURE_FLAG),
-)
-
-internal const val RENDER_NEXT_UI_FEATURE_FLAG = 45649743L
-
-internal val renderNextUIFeatureFlagFingerprint = legacyFingerprint(
-    name = "shortsExperimentalPlayerFeatureFlagFingerprint",
-    accessFlags = AccessFlags.PUBLIC or AccessFlags.FINAL,
-    returnType = "Z",
-    literals = listOf(RENDER_NEXT_UI_FEATURE_FLAG),
-)
+internal val renderNextUIFeatureFlagFingerprint = fingerprint {
+    accessFlags(AccessFlags.PUBLIC, AccessFlags.FINAL)
+    returns("Z")
+    parameters()
+    literal {
+        45649743L
+    }
+}

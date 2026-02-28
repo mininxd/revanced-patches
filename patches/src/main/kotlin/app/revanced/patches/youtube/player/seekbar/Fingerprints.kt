@@ -50,7 +50,6 @@ internal val playerSeekbarHandleColorPrimaryFingerprint = legacyFingerprint(
 internal val playerSeekbarHandleColorSecondaryFingerprint = legacyFingerprint(
     name = "playerSeekbarHandleColorSecondaryFingerprint",
     accessFlags = AccessFlags.PUBLIC or AccessFlags.CONSTRUCTOR,
-    parameters = listOf("Landroid/content/Context;"),
     literals = listOf(inlineTimeBarLiveSeekAbleRange, ytStaticBrandRed),
 )
 
@@ -99,6 +98,30 @@ internal val playerLinearGradientLegacyFingerprint = legacyFingerprint(
 
 internal const val launchScreenLayoutTypeLotteFeatureLegacyFlag = 268507948L
 internal const val launchScreenLayoutTypeLotteFeatureFlag = 1073814316L
+
+internal val setBoundsFingerprint = legacyFingerprint(
+    name = "setBoundsFingerprint",
+    accessFlags = AccessFlags.PUBLIC or AccessFlags.FINAL,
+    returnType = "V",
+    parameters = listOf("I", "I", "I", "I"),
+    opcodes = listOf(
+        Opcode.NEW_ARRAY,
+        Opcode.FILL_ARRAY_DATA
+    )
+)
+
+internal val seekbarThumbFingerprint = legacyFingerprint(
+    name = "seekbarThumbFingerprint",
+    accessFlags = AccessFlags.PUBLIC or AccessFlags.CONSTRUCTOR,
+    returnType = "V",
+    parameters = listOf("Landroid/content/Context;"),
+    opcodes = listOf(
+        Opcode.CONST,
+        Opcode.INVOKE_STATIC,
+        Opcode.MOVE_RESULT,
+        Opcode.INVOKE_VIRTUAL
+    )
+)
 
 internal val launchScreenLayoutTypeFingerprint = legacyFingerprint(
     name = "launchScreenLayoutTypeFingerprint",

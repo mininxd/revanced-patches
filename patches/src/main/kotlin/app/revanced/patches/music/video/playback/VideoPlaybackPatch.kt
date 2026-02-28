@@ -227,10 +227,6 @@ val videoPlaybackPatch = bytecodePatch(
             "revanced_disable_drc_audio",
             "false"
         )
-        addPreferenceWithIntent(
-            CategoryType.VIDEO,
-            "revanced_custom_playback_speeds"
-        )
         addSwitchPreference(
             CategoryType.VIDEO,
             "revanced_enable_opus_codec",
@@ -240,6 +236,10 @@ val videoPlaybackPatch = bytecodePatch(
             CategoryType.VIDEO,
             "revanced_remember_playback_speed_last_selected",
             "true"
+        )
+        addPreferenceWithIntent(
+            CategoryType.VIDEO,
+            "revanced_custom_playback_speeds"
         )
         addSwitchPreference(
             CategoryType.VIDEO,

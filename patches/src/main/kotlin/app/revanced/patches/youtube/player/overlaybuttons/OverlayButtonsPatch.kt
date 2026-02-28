@@ -62,7 +62,7 @@ private const val MARGIN_MINIMUM = "0.1dip"
 private const val MARGIN_DEFAULT = "2.5dip"
 private const val MARGIN_WIDER = "5.0dip"
 
-private const val DEFAULT_ICON = "thin"
+private const val DEFAULT_ICON = "rounded"
 
 @Suppress("unused")
 val overlayButtonsPatch = resourcePatch(
@@ -75,6 +75,7 @@ val overlayButtonsPatch = resourcePatch(
         overlayButtonsBytecodePatch,
         cfBottomUIPatch,
         dismissPlayerHookPatch,
+        geminiButton,
         pipStateHookPatch,
         playerControlsPatch,
         playlistPatch,
@@ -87,8 +88,8 @@ val overlayButtonsPatch = resourcePatch(
         default = DEFAULT_ICON,
         values = mapOf(
             "Bold" to "bold",
-            "Rounded" to "rounded",
-            "Thin" to DEFAULT_ICON
+            "Rounded" to DEFAULT_ICON,
+            "Thin" to "thin"
         ),
         title = "Icon type",
         description = "The icon type.",
@@ -152,6 +153,7 @@ val overlayButtonsPatch = resourcePatch(
             "CopyVideoUrlButton",
             "CopyVideoUrlTimestampButton",
             "ExternalDownloadButton",
+            "GeminiButton",
             "MuteVolumeButton",
             "PlayAllButton",
             "PlaybackSpeedDialogButton",
@@ -215,6 +217,15 @@ val overlayButtonsPatch = resourcePatch(
             )
         }
 
+        // Subtitle overlay layout for Gemini and Yandex transcription
+        copyResources(
+            "youtube/overlaybuttons/shared/host",
+            ResourceGroup(
+                "layout",
+                "revanced_subtitle_overlay_layout.xml"
+            )
+        )
+
         // Merge XML nodes from the host to their respective XML files.
         copyXmlNode(
             "youtube/overlaybuttons/shared/host",
@@ -230,7 +241,7 @@ val overlayButtonsPatch = resourcePatch(
                 node.getAttributeNode("yt:layout_constraintRight_toLeftOf")
                     ?.let { attribute ->
                         if (attribute.textContent == "@id/fullscreen_button") {
-                            attribute.textContent = "@+id/revanced_playback_speed_dialog_button"
+                            attribute.textContent = "@+id/revanced_gemini_button"
                         }
                     }
             }
@@ -252,7 +263,7 @@ val overlayButtonsPatch = resourcePatch(
                             ?.let { attribute ->
                                 if (attribute.textContent == "@id/fullscreen_button") {
                                     attribute.textContent =
-                                        "@+id/revanced_playback_speed_dialog_button"
+                                        "@+id/revanced_gemini_button"
                                 }
                             }
 

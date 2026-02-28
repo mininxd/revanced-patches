@@ -46,6 +46,9 @@ dependencies {
     //noinspection UseTomlInstead
     implementation("com.eclipsesource.j2v8:j2v8:6.3.4@aar")
 
+    implementation(libs.nanohttpd)
+    implementation(libs.protobuf.javalite)
+
     coreLibraryDesugaring(libs.desugar.jdk.libs)
     compileOnly(project(":extensions:shared:stub"))
 }

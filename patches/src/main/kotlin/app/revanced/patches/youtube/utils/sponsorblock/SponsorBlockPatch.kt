@@ -6,7 +6,7 @@ import app.revanced.patcher.extensions.InstructionExtensions.getInstruction
 import app.revanced.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.revanced.patcher.patch.bytecodePatch
 import app.revanced.patcher.patch.resourcePatch
-import app.revanced.patches.youtube.player.overlaybuttons.overlayButtonsPatch
+import app.revanced.patcher.patch.stringOption
 import app.revanced.patches.youtube.utils.compatibility.Constants.COMPATIBLE_PACKAGE
 import app.revanced.patches.youtube.utils.extension.Constants.EXTENSION_PATH
 import app.revanced.patches.youtube.utils.extension.Constants.PATCH_STATUS_CLASS_DESCRIPTOR
@@ -28,21 +28,16 @@ import app.revanced.patches.youtube.video.information.videoInformationPatch
 import app.revanced.patches.youtube.video.information.videoTimeHook
 import app.revanced.util.ResourceGroup
 import app.revanced.util.copyResources
+import app.revanced.util.*
 import app.revanced.util.fingerprint.matchOrThrow
 import app.revanced.util.fingerprint.methodOrThrow
-import app.revanced.util.getReference
-import app.revanced.util.getStringOptionValue
-import app.revanced.util.indexOfFirstInstructionOrThrow
-import app.revanced.util.indexOfFirstInstructionReversedOrThrow
-import app.revanced.util.indexOfFirstLiteralInstructionOrThrow
-import app.revanced.util.lowerCaseOrThrow
-import app.revanced.util.updatePatchStatus
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import org.w3c.dom.Element
 
 private const val EXTENSION_SPONSOR_BLOCK_PATH =
     "$EXTENSION_PATH/sponsorblock"
@@ -187,6 +182,8 @@ val sponsorBlockBytecodePatch = bytecodePatch(
     }
 }
 
+private const val RIGHT = "right"
+
 @Suppress("unused")
 val sponsorBlockPatch = resourcePatch(
     SPONSORBLOCK.title,
@@ -200,6 +197,18 @@ val sponsorBlockPatch = resourcePatch(
         settingsPatch,
     )
 
+    val newSegmentAlignment by stringOption(
+        key = "NewSegmentAlignment",
+        default = RIGHT,
+        values = mapOf(
+            "Right" to RIGHT,
+            "Left" to "left",
+        ),
+        title = "New segment alignment",
+        description = "Align new segment window.",
+        required = true
+    )
+
     execute {
         /**
          * merge SponsorBlock drawables to main drawables
@@ -209,53 +218,45 @@ val sponsorBlockPatch = resourcePatch(
                 "layout",
                 "revanced_sb_inline_sponsor_overlay.xml",
                 "revanced_sb_skip_sponsor_button.xml"
+            ),
+            ResourceGroup(
+                "drawable",
+                "revanced_sb_drag_handle.xml",
+                "revanced_sb_new_segment_background.xml",
+                "revanced_sb_skip_sponsor_button_background.xml"
             )
         ).forEach { resourceGroup ->
             copyResources("youtube/sponsorblock/shared", resourceGroup)
         }
 
-        val iconType = overlayButtonsPatch
-            .getStringOptionValue("iconType")
-            .lowerCaseOrThrow()
-        val outlineIcon = iconType == "thin"
+        arrayOf(
+            ResourceGroup(
+                "layout",
+                "revanced_sb_new_segment.xml"
+            ),
+            ResourceGroup(
+                "drawable",
+                "revanced_sb_adjust.xml",
+                "revanced_sb_backward.xml",
+                "revanced_sb_compare.xml",
+                "revanced_sb_edit.xml",
+                "revanced_sb_forward.xml",
+                "revanced_sb_logo.xml",
+                "revanced_sb_publish.xml",
+                "revanced_sb_voting.xml"
+            )
+        ).forEach { resourceGroup ->
+            copyResources("youtube/sponsorblock/outline", resourceGroup)
+        }
 
-        if (outlineIcon) {
-            arrayOf(
-                ResourceGroup(
-                    "layout",
-                    "revanced_sb_new_segment.xml"
-                ),
-                ResourceGroup(
-                    "drawable",
-                    "revanced_sb_adjust.xml",
-                    "revanced_sb_backward.xml",
-                    "revanced_sb_compare.xml",
-                    "revanced_sb_edit.xml",
-                    "revanced_sb_forward.xml",
-                    "revanced_sb_logo.xml",
-                    "revanced_sb_publish.xml",
-                    "revanced_sb_voting.xml"
-                )
-            ).forEach { resourceGroup ->
-                copyResources("youtube/sponsorblock/outline", resourceGroup)
-            }
-        } else {
-            arrayOf(
-                ResourceGroup(
-                    "layout",
-                    "revanced_sb_new_segment.xml"
-                ),
-                ResourceGroup(
-                    "drawable",
-                    "revanced_sb_adjust.xml",
-                    "revanced_sb_compare.xml",
-                    "revanced_sb_edit.xml",
-                    "revanced_sb_logo.xml",
-                    "revanced_sb_publish.xml",
-                    "revanced_sb_voting.xml"
-                )
-            ).forEach { resourceGroup ->
-                copyResources("youtube/sponsorblock/default", resourceGroup)
+        if (newSegmentAlignment == "left") {
+            document("res/layout/revanced_sb_inline_sponsor_overlay.xml").use { document ->
+                document.doRecursively loop@{ node ->
+                    if (node is Element && node.tagName == "app.revanced.integrations.youtube.sponsorblock.ui.NewSegmentLayout") {
+                        node.setAttribute("android:layout_alignParentRight", "false")
+                        node.setAttribute("android:layout_alignParentLeft", "true")
+                    }
+                }
             }
         }
 

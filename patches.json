@@ -87,6 +87,26 @@
     "description": "Adds an option to use a different host for static images, so that images blocked in some countries can be received.",
     "use": true,
     "dependencies": [
+      "BytecodePatch",
+      "Settings for YouTube"
+    ],
+    "compatiblePackages": {
+      "com.google.android.youtube": [
+        "19.05.36",
+        "19.16.39",
+        "19.43.41",
+        "19.44.39",
+        "19.47.53",
+        "20.05.46"
+      ]
+    },
+    "options": []
+  },
+  {
+    "name": "Bypass image region restrictions",
+    "description": "Adds an option to use a different host for static images, so that images blocked in some countries can be received.",
+    "use": true,
+    "dependencies": [
       "Settings for YouTube Music",
       "BytecodePatch"
     ],
@@ -101,26 +121,6 @@
         "8.12.54",
         "8.28.54",
         "8.30.54"
-      ]
-    },
-    "options": []
-  },
-  {
-    "name": "Bypass image region restrictions",
-    "description": "Adds an option to use a different host for static images, so that images blocked in some countries can be received.",
-    "use": true,
-    "dependencies": [
-      "BytecodePatch",
-      "Settings for YouTube"
-    ],
-    "compatiblePackages": {
-      "com.google.android.youtube": [
-        "19.05.36",
-        "19.16.39",
-        "19.43.41",
-        "19.44.39",
-        "19.47.53",
-        "20.05.46"
       ]
     },
     "options": []
@@ -168,6 +168,16 @@
     "options": []
   },
   {
+    "name": "Change installer package name",
+    "description": "Spoof the installer package name to make it appear that the app was installed from the Google Play Store.",
+    "use": false,
+    "dependencies": [
+      "BytecodePatch"
+    ],
+    "compatiblePackages": null,
+    "options": []
+  },
+  {
     "name": "Change live ring click action",
     "description": "Adds an option to open the channel instead of the live stream when clicking on the live ring.",
     "use": true,
@@ -190,10 +200,34 @@
     "options": []
   },
   {
+    "name": "Change lyrics provider",
+    "description": "Changes the lyrics provider to a custom one.",
+    "use": false,
+    "dependencies": [],
+    "compatiblePackages": {
+      "com.spotify.music": [
+        "9.0.90.1229"
+      ]
+    },
+    "options": [
+      {
+        "key": "lyricsProviderHost",
+        "title": "Lyrics provider host",
+        "description": "The domain name or IP address of a custom lyrics provider.",
+        "required": false,
+        "type": "kotlin.String",
+        "default": "lyrics.natanchiodi.fr",
+        "values": null
+      }
+    ]
+  },
+  {
     "name": "Change package name",
     "description": "Changes the package name for Reddit to the name specified in patch options.",
     "use": false,
-    "dependencies": [],
+    "dependencies": [
+      "BytecodePatch"
+    ],
     "compatiblePackages": {
       "com.reddit.frontpage": [
         "2024.17.0",
@@ -241,6 +275,29 @@
     "description": "Adds an option to change the in-app share sheet to the system share sheet.",
     "use": true,
     "dependencies": [
+      "Settings for YouTube",
+      "BytecodePatch",
+      "BytecodePatch",
+      "ResourcePatch",
+      "BytecodePatch"
+    ],
+    "compatiblePackages": {
+      "com.google.android.youtube": [
+        "19.05.36",
+        "19.16.39",
+        "19.43.41",
+        "19.44.39",
+        "19.47.53",
+        "20.05.46"
+      ]
+    },
+    "options": []
+  },
+  {
+    "name": "Change share sheet",
+    "description": "Adds an option to change the in-app share sheet to the system share sheet.",
+    "use": true,
+    "dependencies": [
       "Settings for YouTube Music",
       "BytecodePatch",
       "ResourcePatch"
@@ -261,15 +318,11 @@
     "options": []
   },
   {
-    "name": "Change share sheet",
-    "description": "Adds an option to change the in-app share sheet to the system share sheet.",
+    "name": "Change start page",
+    "description": "Adds an option to set which page the app opens in instead of the homepage.",
     "use": true,
     "dependencies": [
-      "Settings for YouTube",
-      "BytecodePatch",
-      "BytecodePatch",
-      "ResourcePatch",
-      "BytecodePatch"
+      "Settings for YouTube"
     ],
     "compatiblePackages": {
       "com.google.android.youtube": [
@@ -302,25 +355,6 @@
         "8.12.54",
         "8.28.54",
         "8.30.54"
-      ]
-    },
-    "options": []
-  },
-  {
-    "name": "Change start page",
-    "description": "Adds an option to set which page the app opens in instead of the homepage.",
-    "use": true,
-    "dependencies": [
-      "Settings for YouTube"
-    ],
-    "compatiblePackages": {
-      "com.google.android.youtube": [
-        "19.05.36",
-        "19.16.39",
-        "19.43.41",
-        "19.44.39",
-        "19.47.53",
-        "20.05.46"
       ]
     },
     "options": []
@@ -386,7 +420,7 @@
   {
     "name": "Custom branding icon for YouTube",
     "description": "Changes the YouTube app icon to the icon specified in patch options.",
-    "use": true,
+    "use": false,
     "dependencies": [
       "Settings for YouTube",
       "ResourcePatch"
@@ -408,20 +442,36 @@
         "description": "The icon to apply to the app.\n\nIf a path to a folder is provided, the folder must contain the following folders:\n\n- mipmap-xxxhdpi\n- mipmap-xxhdpi\n- mipmap-xhdpi\n- mipmap-hdpi\n- mipmap-mdpi\n\nEach of these folders must contain the following files:\n\n- adaptiveproduct_youtube_background_color_108.png\n- adaptiveproduct_youtube_foreground_color_108.png\n- ic_launcher.png\n- ic_launcher_round.png",
         "required": true,
         "type": "kotlin.String",
-        "default": "revancify_blue",
+        "default": "xisr_winter",
         "values": {
           "AFN Blue": "afn_blue",
           "AFN Red": "afn_red",
           "MMT": "mmt",
+          "MMT Blue": "mmt_blue",
+          "MMT Green": "mmt_green",
+          "MMT Orange": "mmt_orange",
+          "MMT Pink": "mmt_pink",
+          "MMT Turquoise": "mmt_turquoise",
+          "MMT Yellow": "mmt_yellow",
           "Revancify Blue": "revancify_blue",
           "Revancify Red": "revancify_red",
-          "YouTube": "youtube"
+          "Squid Game": "squid_game",
+          "Vanced Black": "vanced_black",
+          "Vanced Light": "vanced_light",
+          "Xisr Aurora": "xisr_aurora",
+          "Xisr Evergreen": "xisr_evergreen",
+          "Xisr Special": "xisr_special",
+          "Xisr White": "xisr_white",
+          "Xisr Winter": "xisr_winter",
+          "Xisr Yellow": "xisr_yellow",
+          "YouTube": "youtube",
+          "YouTube Black": "youtube_black"
         }
       },
       {
         "key": "changeSplashIcon",
         "title": "Change splash icons",
-        "description": "Apply the custom branding icon to the splash screen. Supports from YouTube 18.29.38 to YouTube 19.16.39.",
+        "description": "Apply the custom branding icon to the splash screen. Supports from YouTube 19.05.36 to YouTube 19.16.39.",
         "required": true,
         "type": "kotlin.Boolean",
         "default": true,
@@ -441,7 +491,7 @@
   {
     "name": "Custom branding icon for YouTube Music",
     "description": "Changes the YouTube Music app icon to the icon specified in patch options.",
-    "use": true,
+    "use": false,
     "dependencies": [
       "Settings for YouTube Music",
       "ResourcePatch"
@@ -466,13 +516,22 @@
         "description": "The icon to apply to the app.\n\nIf a path to a folder is provided, the folder must contain the following folders:\n\n- mipmap-xxxhdpi\n- mipmap-xxhdpi\n- mipmap-xhdpi\n- mipmap-hdpi\n- mipmap-mdpi\n\nEach of these folders must contain the following files:\n\n- adaptiveproduct_youtube_music_background_color_108.png\n- adaptiveproduct_youtube_music_foreground_color_108.png\n- ic_launcher_release.png",
         "required": true,
         "type": "kotlin.String",
-        "default": "revancify_blue",
+        "default": "xisr_yellow",
         "values": {
           "AFN Blue": "afn_blue",
           "AFN Red": "afn_red",
           "MMT": "mmt",
+          "MMT Blue": "mmt_blue",
+          "MMT Green": "mmt_green",
+          "MMT Orange": "mmt_orange",
+          "MMT Pink": "mmt_pink",
+          "MMT Turquoise": "mmt_turquoise",
+          "MMT Yellow": "mmt_yellow",
           "Revancify Blue": "revancify_blue",
           "Revancify Red": "revancify_red",
+          "Vanced Black": "vanced_black",
+          "Vanced Light": "vanced_light",
+          "Xisr Yellow": "xisr_yellow",
           "YouTube Music": "youtube_music"
         }
       },
@@ -500,7 +559,9 @@
     "name": "Custom branding name for Reddit",
     "description": "Changes the Reddit app name to the name specified in patch options.",
     "use": false,
-    "dependencies": [],
+    "dependencies": [
+      "BytecodePatch"
+    ],
     "compatiblePackages": {
       "com.reddit.frontpage": [
         "2024.17.0",
@@ -524,9 +585,32 @@
     ]
   },
   {
+    "name": "Custom branding name for Spotify",
+    "description": "Changes the Spotify app name to the name specified in patch options.",
+    "use": false,
+    "dependencies": [],
+    "compatiblePackages": {
+      "com.spotify.music": null
+    },
+    "options": [
+      {
+        "key": "appName",
+        "title": "App name",
+        "description": "The name of the app.",
+        "required": true,
+        "type": "kotlin.String",
+        "default": "Spotify",
+        "values": {
+          "Default": "RVX Spotify",
+          "Original": "Spotify"
+        }
+      }
+    ]
+  },
+  {
     "name": "Custom branding name for YouTube",
     "description": "Changes the YouTube app name to the name specified in patch options.",
-    "use": true,
+    "use": false,
     "dependencies": [
       "Settings for YouTube"
     ],
@@ -560,7 +644,7 @@
   {
     "name": "Custom branding name for YouTube Music",
     "description": "Changes the YouTube Music app name to the name specified in patch options.",
-    "use": true,
+    "use": false,
     "dependencies": [
       "Settings for YouTube Music"
     ],
@@ -704,6 +788,93 @@
     ]
   },
   {
+    "name": "Custom theme",
+    "description": "Applies a custom theme (defaults to amoled black)",
+    "use": false,
+    "dependencies": [
+      "BytecodePatch"
+    ],
+    "compatiblePackages": {
+      "com.spotify.music": [
+        "9.0.90.1229"
+      ]
+    },
+    "options": [
+      {
+        "key": "backgroundColor",
+        "title": "Primary background color",
+        "description": "The background color. Can be a hex color or a resource reference.",
+        "required": true,
+        "type": "kotlin.String",
+        "default": "@android:color/black",
+        "values": null
+      },
+      {
+        "key": "overridePlayerGradientColor",
+        "title": "Override player gradient color",
+        "description": "Apply primary background color to the player gradient color, which changes dynamically with the song.",
+        "required": false,
+        "type": "kotlin.Boolean",
+        "default": false,
+        "values": null
+      },
+      {
+        "key": "enableBackgroundColorSecondary",
+        "title": "Enable secondary background color",
+        "description": "The option to enable the secondary background color.",
+        "required": true,
+        "type": "kotlin.Boolean",
+        "default": false,
+        "values": null
+      },
+      {
+        "key": "backgroundColorSecondary",
+        "title": "Secondary background color",
+        "description": "The secondary background color. (e.g. playlist list in home, player artist, song credits). Can be a hex color or a resource reference.\",",
+        "required": true,
+        "type": "kotlin.String",
+        "default": "#FF121212",
+        "values": null
+      },
+      {
+        "key": "accentColor",
+        "title": "Accent color",
+        "description": "The accent color (\u0027Spotify green\u0027 by default). Can be a hex color or a resource reference.",
+        "required": true,
+        "type": "kotlin.String",
+        "default": "#FF1ED760",
+        "values": null
+      },
+      {
+        "key": "accentColorPressed",
+        "title": "Pressed accent color",
+        "description": "The color when accented buttons are pressed, by default slightly darker than accent. Can be a hex color or a resource reference.",
+        "required": true,
+        "type": "kotlin.String",
+        "default": "#FF1ABC54",
+        "values": null
+      },
+      {
+        "key": "iconColor",
+        "title": "Icon color",
+        "description": "Apply the accent color to the launcher icon.",
+        "required": true,
+        "type": "kotlin.Boolean",
+        "default": true,
+        "values": null
+      },
+      {
+        "key": "minimalIcon",
+        "title": "Minimal icon",
+        "description": "Apply alternative minimal launcher icon.",
+        "required": true,
+        "type": "kotlin.Boolean",
+        "default": false,
+        "values": null
+      }
+    ]
+  },
+  {
     "name": "Dark theme",
     "description": "Changes the app\u0027s dark theme to the values specified in patch options.",
     "use": true,
@@ -805,6 +976,26 @@
     "description": "Adds an option to disable CronetEngine\u0027s QUIC protocol.",
     "use": true,
     "dependencies": [
+      "Settings for YouTube",
+      "BytecodePatch"
+    ],
+    "compatiblePackages": {
+      "com.google.android.youtube": [
+        "19.05.36",
+        "19.16.39",
+        "19.43.41",
+        "19.44.39",
+        "19.47.53",
+        "20.05.46"
+      ]
+    },
+    "options": []
+  },
+  {
+    "name": "Disable QUIC protocol",
+    "description": "Adds an option to disable CronetEngine\u0027s QUIC protocol.",
+    "use": true,
+    "dependencies": [
       "Settings for YouTube Music",
       "BytecodePatch"
     ],
@@ -819,26 +1010,6 @@
         "8.12.54",
         "8.28.54",
         "8.30.54"
-      ]
-    },
-    "options": []
-  },
-  {
-    "name": "Disable QUIC protocol",
-    "description": "Adds an option to disable CronetEngine\u0027s QUIC protocol.",
-    "use": true,
-    "dependencies": [
-      "Settings for YouTube",
-      "BytecodePatch"
-    ],
-    "compatiblePackages": {
-      "com.google.android.youtube": [
-        "19.05.36",
-        "19.16.39",
-        "19.43.41",
-        "19.44.39",
-        "19.47.53",
-        "20.05.46"
       ]
     },
     "options": []
@@ -879,29 +1050,6 @@
     "description": "Adds an option to disable audio tracks from being automatically enabled.",
     "use": true,
     "dependencies": [
-      "Settings for YouTube Music",
-      "ResourcePatch"
-    ],
-    "compatiblePackages": {
-      "com.google.android.apps.youtube.music": [
-        "6.20.51",
-        "6.29.59",
-        "6.42.55",
-        "6.51.53",
-        "7.16.53",
-        "7.25.53",
-        "8.12.54",
-        "8.28.54",
-        "8.30.54"
-      ]
-    },
-    "options": []
-  },
-  {
-    "name": "Disable forced auto audio tracks",
-    "description": "Adds an option to disable audio tracks from being automatically enabled.",
-    "use": true,
-    "dependencies": [
       "Settings for YouTube",
       "ResourcePatch"
     ],
@@ -918,12 +1066,12 @@
     "options": []
   },
   {
-    "name": "Disable forced auto captions",
-    "description": "Adds an option to disable captions from being automatically enabled.",
+    "name": "Disable forced auto audio tracks",
+    "description": "Adds an option to disable audio tracks from being automatically enabled.",
     "use": true,
     "dependencies": [
-      "BytecodePatch",
-      "Settings for YouTube Music"
+      "Settings for YouTube Music",
+      "ResourcePatch"
     ],
     "compatiblePackages": {
       "com.google.android.apps.youtube.music": [
@@ -956,6 +1104,29 @@
         "19.44.39",
         "19.47.53",
         "20.05.46"
+      ]
+    },
+    "options": []
+  },
+  {
+    "name": "Disable forced auto captions",
+    "description": "Adds an option to disable captions from being automatically enabled.",
+    "use": true,
+    "dependencies": [
+      "BytecodePatch",
+      "Settings for YouTube Music"
+    ],
+    "compatiblePackages": {
+      "com.google.android.apps.youtube.music": [
+        "6.20.51",
+        "6.29.59",
+        "6.42.55",
+        "6.51.53",
+        "7.16.53",
+        "7.25.53",
+        "8.12.54",
+        "8.28.54",
+        "8.30.54"
       ]
     },
     "options": []
@@ -1121,6 +1292,27 @@
   },
   {
     "name": "Enable debug logging",
+    "description": "Adds an option for debugging and exporting RVX logs to the clipboard.",
+    "use": true,
+    "dependencies": [
+      "Settings for YouTube",
+      "BytecodePatch",
+      "ResourcePatch"
+    ],
+    "compatiblePackages": {
+      "com.google.android.youtube": [
+        "19.05.36",
+        "19.16.39",
+        "19.43.41",
+        "19.44.39",
+        "19.47.53",
+        "20.05.46"
+      ]
+    },
+    "options": []
+  },
+  {
+    "name": "Enable debug logging",
     "description": "Adds an option for debugging.",
     "use": false,
     "dependencies": [
@@ -1137,27 +1329,6 @@
         "8.12.54",
         "8.28.54",
         "8.30.54"
-      ]
-    },
-    "options": []
-  },
-  {
-    "name": "Enable debug logging",
-    "description": "Adds an option for debugging and exporting RVX logs to the clipboard.",
-    "use": true,
-    "dependencies": [
-      "Settings for YouTube",
-      "BytecodePatch",
-      "ResourcePatch"
-    ],
-    "compatiblePackages": {
-      "com.google.android.youtube": [
-        "19.05.36",
-        "19.16.39",
-        "19.43.41",
-        "19.44.39",
-        "19.47.53",
-        "20.05.46"
       ]
     },
     "options": []
@@ -1205,6 +1376,30 @@
     "options": []
   },
   {
+    "name": "Fix Facebook login",
+    "description": "Fix logging in with Facebook when the app is patched by always opening the login in a web browser window.",
+    "use": true,
+    "dependencies": [],
+    "compatiblePackages": {
+      "com.spotify.music": [
+        "9.0.90.1229"
+      ]
+    },
+    "options": []
+  },
+  {
+    "name": "Fix third party launchers widgets",
+    "description": "Fixes Spotify widgets not working in third party launchers, like Nova Launcher.",
+    "use": true,
+    "dependencies": [],
+    "compatiblePackages": {
+      "com.spotify.music": [
+        "9.0.90.1229"
+      ]
+    },
+    "options": []
+  },
+  {
     "name": "Flyout menu components",
     "description": "Adds options to hide or change flyout menu components.",
     "use": true,
@@ -1234,9 +1429,9 @@
     "options": []
   },
   {
-    "name": "Force hide player buttons background",
-    "description": "Removes, at compile time, the dark background surrounding the video player controls.",
-    "use": false,
+    "name": "Force player buttons background",
+    "description": "Changes the dark background surrounding the video player controls at compile time.",
+    "use": true,
     "dependencies": [
       "Settings for YouTube"
     ],
@@ -1250,7 +1445,30 @@
         "20.05.46"
       ]
     },
-    "options": []
+    "options": [
+      {
+        "key": "BackgroundColor",
+        "title": "Background color",
+        "description": "Specify a background color for player buttons using a hex color code. The first two symbols of the hex code represent the alpha channel, which is used to change the opacity.",
+        "required": false,
+        "type": "kotlin.String",
+        "default": "?ytOverlayBackgroundMediumLight",
+        "values": {
+          "Default": "?ytOverlayBackgroundMediumLight",
+          "Transparent": "@android:color/transparent",
+          "Opacity10": "#1a000000",
+          "Opacity20": "#33000000",
+          "Opacity30": "#4d000000",
+          "Opacity40": "#66000000",
+          "Opacity50": "#80000000",
+          "Opacity60": "#99000000",
+          "Opacity70": "#b3000000",
+          "Opacity80": "#cc000000",
+          "Opacity90": "#e6000000",
+          "Opacity100": "#ff000000"
+        }
+      }
+    ]
   },
   {
     "name": "Fullscreen components",
@@ -1288,16 +1506,13 @@
       "BytecodePatch"
     ],
     "compatiblePackages": {
-      "com.google.android.apps.youtube.music": [
-        "6.20.51",
-        "6.29.59",
-        "6.42.55",
-        "6.51.53",
-        "7.16.53",
-        "7.25.53",
-        "8.12.54",
-        "8.28.54",
-        "8.30.54"
+      "com.google.android.youtube": [
+        "19.05.36",
+        "19.16.39",
+        "19.43.41",
+        "19.44.39",
+        "19.47.53",
+        "20.05.46"
       ]
     },
     "options": [
@@ -1310,7 +1525,8 @@
         "default": "app.revanced",
         "values": {
           "ReVanced MicroG": "app.revanced",
-          "Original MicroG": "com.google"
+          "Original MicroG": "com.google",
+          "Vanced MicroG": "com.mgoogle"
         }
       },
       {
@@ -1337,10 +1553,10 @@
         "description": "The name of the package to use in GmsCore support.",
         "required": true,
         "type": "kotlin.String",
-        "default": "app.rvx.android.youtube",
+        "default": "anddea.youtube",
         "values": {
-          "Clone": "com.rvx.android.youtube",
-          "Default": "app.rvx.android.youtube"
+          "Clone": "bill.youtube",
+          "Default": "anddea.youtube"
         }
       },
       {
@@ -1349,10 +1565,10 @@
         "description": "The name of the package to use in GmsCore support.",
         "required": true,
         "type": "kotlin.String",
-        "default": "app.rvx.android.apps.youtube.music",
+        "default": "anddea.youtube.music",
         "values": {
-          "Clone": "com.rvx.android.apps.youtube.music",
-          "Default": "app.rvx.android.apps.youtube.music"
+          "Clone": "bill.youtube.music",
+          "Default": "anddea.youtube.music"
         }
       },
       {
@@ -1375,13 +1591,16 @@
       "BytecodePatch"
     ],
     "compatiblePackages": {
-      "com.google.android.youtube": [
-        "19.05.36",
-        "19.16.39",
-        "19.43.41",
-        "19.44.39",
-        "19.47.53",
-        "20.05.46"
+      "com.google.android.apps.youtube.music": [
+        "6.20.51",
+        "6.29.59",
+        "6.42.55",
+        "6.51.53",
+        "7.16.53",
+        "7.25.53",
+        "8.12.54",
+        "8.28.54",
+        "8.30.54"
       ]
     },
     "options": [
@@ -1394,7 +1613,8 @@
         "default": "app.revanced",
         "values": {
           "ReVanced MicroG": "app.revanced",
-          "Original MicroG": "com.google"
+          "Original MicroG": "com.google",
+          "Vanced MicroG": "com.mgoogle"
         }
       },
       {
@@ -1421,10 +1641,10 @@
         "description": "The name of the package to use in GmsCore support.",
         "required": true,
         "type": "kotlin.String",
-        "default": "app.rvx.android.youtube",
+        "default": "anddea.youtube",
         "values": {
-          "Clone": "com.rvx.android.youtube",
-          "Default": "app.rvx.android.youtube"
+          "Clone": "bill.youtube",
+          "Default": "anddea.youtube"
         }
       },
       {
@@ -1433,10 +1653,10 @@
         "description": "The name of the package to use in GmsCore support.",
         "required": true,
         "type": "kotlin.String",
-        "default": "app.rvx.android.apps.youtube.music",
+        "default": "anddea.youtube.music",
         "values": {
-          "Clone": "com.rvx.android.apps.youtube.music",
-          "Default": "app.rvx.android.apps.youtube.music"
+          "Clone": "bill.youtube.music",
+          "Default": "anddea.youtube.music"
         }
       },
       {
@@ -1449,6 +1669,20 @@
         "values": null
       }
     ]
+  },
+  {
+    "name": "Hide Create button",
+    "description": "Hides the \"Create\" button in the navigation bar.",
+    "use": true,
+    "dependencies": [
+      "BytecodePatch"
+    ],
+    "compatiblePackages": {
+      "com.spotify.music": [
+        "9.0.90.1229"
+      ]
+    },
+    "options": []
   },
   {
     "name": "Hide Recently Visited shelf",
@@ -1601,6 +1835,31 @@
     "description": "Adds options to hide ads.",
     "use": true,
     "dependencies": [
+      "Settings for YouTube",
+      "BytecodePatch",
+      "BytecodePatch",
+      "ResourcePatch",
+      "BytecodePatch",
+      "ResourcePatch",
+      "ResourcePatch"
+    ],
+    "compatiblePackages": {
+      "com.google.android.youtube": [
+        "19.05.36",
+        "19.16.39",
+        "19.43.41",
+        "19.44.39",
+        "19.47.53",
+        "20.05.46"
+      ]
+    },
+    "options": []
+  },
+  {
+    "name": "Hide ads",
+    "description": "Adds options to hide ads.",
+    "use": true,
+    "dependencies": [
       "Settings for YouTube Music",
       "BytecodePatch",
       "Navigation bar components",
@@ -1637,31 +1896,6 @@
         "2024.17.0",
         "2025.05.1",
         "2025.12.1"
-      ]
-    },
-    "options": []
-  },
-  {
-    "name": "Hide ads",
-    "description": "Adds options to hide ads.",
-    "use": true,
-    "dependencies": [
-      "Settings for YouTube",
-      "BytecodePatch",
-      "BytecodePatch",
-      "ResourcePatch",
-      "BytecodePatch",
-      "ResourcePatch",
-      "ResourcePatch"
-    ],
-    "compatiblePackages": {
-      "com.google.android.youtube": [
-        "19.05.36",
-        "19.16.39",
-        "19.43.41",
-        "19.44.39",
-        "19.47.53",
-        "20.05.46"
       ]
     },
     "options": []
@@ -1742,6 +1976,31 @@
     "description": "Adds options to hide general layout components.",
     "use": true,
     "dependencies": [
+      "Settings for YouTube",
+      "BytecodePatch",
+      "BytecodePatch",
+      "ResourcePatch",
+      "BytecodePatch",
+      "BytecodePatch",
+      "ResourcePatch"
+    ],
+    "compatiblePackages": {
+      "com.google.android.youtube": [
+        "19.05.36",
+        "19.16.39",
+        "19.43.41",
+        "19.44.39",
+        "19.47.53",
+        "20.05.46"
+      ]
+    },
+    "options": []
+  },
+  {
+    "name": "Hide layout components",
+    "description": "Adds options to hide general layout components.",
+    "use": true,
+    "dependencies": [
       "Settings for YouTube Music",
       "BytecodePatch",
       "ResourcePatch",
@@ -1759,31 +2018,6 @@
         "8.12.54",
         "8.28.54",
         "8.30.54"
-      ]
-    },
-    "options": []
-  },
-  {
-    "name": "Hide layout components",
-    "description": "Adds options to hide general layout components.",
-    "use": true,
-    "dependencies": [
-      "Settings for YouTube",
-      "BytecodePatch",
-      "BytecodePatch",
-      "ResourcePatch",
-      "BytecodePatch",
-      "BytecodePatch",
-      "ResourcePatch"
-    ],
-    "compatiblePackages": {
-      "com.google.android.youtube": [
-        "19.05.36",
-        "19.16.39",
-        "19.43.41",
-        "19.44.39",
-        "19.47.53",
-        "20.05.46"
       ]
     },
     "options": []
@@ -2011,6 +2245,20 @@
     "options": []
   },
   {
+    "name": "Lyrics search",
+    "description": "Displays a \"Search Lyrics\" panel in the Main Activity that searches for lyrics on Google, and song meanings on Songtell. The activity is set to SpotifyMainActivity, so the \"Search Lyrics\" panel won\u0027t be shown in NowPlayingActivity (Player view) or possibly other activities.",
+    "use": true,
+    "dependencies": [
+      "BytecodePatch"
+    ],
+    "compatiblePackages": {
+      "com.spotify.music": [
+        "9.0.90.1229"
+      ]
+    },
+    "options": []
+  },
+  {
     "name": "MaterialYou",
     "description": "Applies the MaterialYou theme for Android 12+ devices.",
     "use": false,
@@ -2056,6 +2304,30 @@
     "description": "Adds options to hide or change components related to the navigation bar.",
     "use": true,
     "dependencies": [
+      "ResourcePatch",
+      "Settings for YouTube",
+      "ResourcePatch",
+      "BytecodePatch",
+      "BytecodePatch",
+      "ResourcePatch"
+    ],
+    "compatiblePackages": {
+      "com.google.android.youtube": [
+        "19.05.36",
+        "19.16.39",
+        "19.43.41",
+        "19.44.39",
+        "19.47.53",
+        "20.05.46"
+      ]
+    },
+    "options": []
+  },
+  {
+    "name": "Navigation bar components",
+    "description": "Adds options to hide or change components related to the navigation bar.",
+    "use": true,
+    "dependencies": [
       "Change start page",
       "ResourcePatch",
       "ResourcePatch",
@@ -2078,49 +2350,8 @@
     "options": []
   },
   {
-    "name": "Navigation bar components",
-    "description": "Adds options to hide or change components related to the navigation bar.",
-    "use": true,
-    "dependencies": [
-      "ResourcePatch",
-      "Settings for YouTube",
-      "ResourcePatch",
-      "BytecodePatch",
-      "BytecodePatch",
-      "ResourcePatch"
-    ],
-    "compatiblePackages": {
-      "com.google.android.youtube": [
-        "19.05.36",
-        "19.16.39",
-        "19.43.41",
-        "19.44.39",
-        "19.47.53",
-        "20.05.46"
-      ]
-    },
-    "options": []
-  },
-  {
     "name": "Open links directly",
     "description": "Adds an option to skip over redirection URLs in external links.",
-    "use": true,
-    "dependencies": [
-      "Settings for Reddit",
-      "BytecodePatch"
-    ],
-    "compatiblePackages": {
-      "com.reddit.frontpage": [
-        "2024.17.0",
-        "2025.05.1",
-        "2025.12.1"
-      ]
-    },
-    "options": []
-  },
-  {
-    "name": "Open links externally",
-    "description": "Adds an option to always open links in your browser instead of in the in-app-browser.",
     "use": true,
     "dependencies": [
       "Settings for Reddit",
@@ -2156,6 +2387,23 @@
     "options": []
   },
   {
+    "name": "Open links externally",
+    "description": "Adds an option to always open links in your browser instead of in the in-app-browser.",
+    "use": true,
+    "dependencies": [
+      "Settings for Reddit",
+      "BytecodePatch"
+    ],
+    "compatiblePackages": {
+      "com.reddit.frontpage": [
+        "2024.17.0",
+        "2025.05.1",
+        "2025.12.1"
+      ]
+    },
+    "options": []
+  },
+  {
     "name": "Overlay buttons",
     "description": "Adds options to display useful overlay buttons in the video player.",
     "use": true,
@@ -2163,6 +2411,7 @@
       "BytecodePatch",
       "BytecodePatch",
       "BytecodePatch",
+      "ResourcePatch",
       "BytecodePatch",
       "BytecodePatch",
       "BytecodePatch",
@@ -2186,7 +2435,7 @@
         "description": "The icon type.",
         "required": true,
         "type": "kotlin.String",
-        "default": "thin",
+        "default": "rounded",
         "values": {
           "Bold": "bold",
           "Rounded": "rounded",
@@ -2236,6 +2485,37 @@
   },
   {
     "name": "Player components",
+    "description": "Adds options to hide or change components related to the video player.",
+    "use": true,
+    "dependencies": [
+      "Settings for YouTube",
+      "BytecodePatch",
+      "BytecodePatch",
+      "BytecodePatch",
+      "BytecodePatch",
+      "BytecodePatch",
+      "BytecodePatch",
+      "BytecodePatch",
+      "BytecodePatch",
+      "ResourcePatch",
+      "BytecodePatch",
+      "BytecodePatch",
+      "ResourcePatch"
+    ],
+    "compatiblePackages": {
+      "com.google.android.youtube": [
+        "19.05.36",
+        "19.16.39",
+        "19.43.41",
+        "19.44.39",
+        "19.47.53",
+        "20.05.46"
+      ]
+    },
+    "options": []
+  },
+  {
+    "name": "Player components",
     "description": "Adds options to hide or change components related to the player.",
     "use": true,
     "dependencies": [
@@ -2273,22 +2553,28 @@
     ]
   },
   {
-    "name": "Player components",
-    "description": "Adds options to hide or change components related to the video player.",
+    "name": "Premium icon",
+    "description": "Unlocks premium app icons.",
     "use": true,
     "dependencies": [
+      "BytecodePatch"
+    ],
+    "compatiblePackages": {
+      "com.reddit.frontpage": [
+        "2024.17.0",
+        "2025.05.1",
+        "2025.12.1"
+      ]
+    },
+    "options": []
+  },
+  {
+    "name": "Remove background playback restrictions",
+    "description": "Removes restrictions on background playback, including for music and kids videos.",
+    "use": true,
+    "dependencies": [
+      "BytecodePatch",
       "Settings for YouTube",
-      "BytecodePatch",
-      "BytecodePatch",
-      "BytecodePatch",
-      "BytecodePatch",
-      "BytecodePatch",
-      "BytecodePatch",
-      "BytecodePatch",
-      "BytecodePatch",
-      "ResourcePatch",
-      "BytecodePatch",
-      "BytecodePatch",
       "ResourcePatch"
     ],
     "compatiblePackages": {
@@ -2299,20 +2585,6 @@
         "19.44.39",
         "19.47.53",
         "20.05.46"
-      ]
-    },
-    "options": []
-  },
-  {
-    "name": "Premium icon",
-    "description": "Unlocks premium app icons.",
-    "use": true,
-    "dependencies": [],
-    "compatiblePackages": {
-      "com.reddit.frontpage": [
-        "2024.17.0",
-        "2025.05.1",
-        "2025.12.1"
       ]
     },
     "options": []
@@ -2340,27 +2612,6 @@
     "options": []
   },
   {
-    "name": "Remove background playback restrictions",
-    "description": "Removes restrictions on background playback, including for music and kids videos.",
-    "use": true,
-    "dependencies": [
-      "BytecodePatch",
-      "Settings for YouTube",
-      "ResourcePatch"
-    ],
-    "compatiblePackages": {
-      "com.google.android.youtube": [
-        "19.05.36",
-        "19.16.39",
-        "19.43.41",
-        "19.44.39",
-        "19.47.53",
-        "20.05.46"
-      ]
-    },
-    "options": []
-  },
-  {
     "name": "Remove subreddit dialog",
     "description": "Adds options to remove the NSFW community warning and notifications suggestion dialogs by dismissing them automatically.",
     "use": true,
@@ -2373,29 +2624,6 @@
         "2024.17.0",
         "2025.05.1",
         "2025.12.1"
-      ]
-    },
-    "options": []
-  },
-  {
-    "name": "Remove viewer discretion dialog",
-    "description": "Adds an option to remove the dialog that appears when opening a video that has been age-restricted by accepting it automatically. This does not bypass the age restriction.",
-    "use": true,
-    "dependencies": [
-      "BytecodePatch",
-      "Settings for YouTube Music"
-    ],
-    "compatiblePackages": {
-      "com.google.android.apps.youtube.music": [
-        "6.20.51",
-        "6.29.59",
-        "6.42.55",
-        "6.51.53",
-        "7.16.53",
-        "7.25.53",
-        "8.12.54",
-        "8.28.54",
-        "8.30.54"
       ]
     },
     "options": []
@@ -2421,10 +2649,11 @@
     "options": []
   },
   {
-    "name": "Restore old style library shelf",
-    "description": "Adds an option to return the Library tab to the old style.",
+    "name": "Remove viewer discretion dialog",
+    "description": "Adds an option to remove the dialog that appears when opening a video that has been age-restricted by accepting it automatically. This does not bypass the age restriction.",
     "use": true,
     "dependencies": [
+      "BytecodePatch",
       "Settings for YouTube Music"
     ],
     "compatiblePackages": {
@@ -2443,11 +2672,10 @@
     "options": []
   },
   {
-    "name": "Return YouTube Dislike",
-    "description": "Adds an option to show the dislike count of songs using the Return YouTube Dislike API.",
+    "name": "Restore old style library shelf",
+    "description": "Adds an option to return the Library tab to the old style.",
     "use": true,
     "dependencies": [
-      "BytecodePatch",
       "Settings for YouTube Music"
     ],
     "compatiblePackages": {
@@ -2490,9 +2718,52 @@
     "options": []
   },
   {
+    "name": "Return YouTube Dislike",
+    "description": "Adds an option to show the dislike count of songs using the Return YouTube Dislike API.",
+    "use": true,
+    "dependencies": [
+      "BytecodePatch",
+      "Settings for YouTube Music"
+    ],
+    "compatiblePackages": {
+      "com.google.android.apps.youtube.music": [
+        "6.20.51",
+        "6.29.59",
+        "6.42.55",
+        "6.51.53",
+        "7.16.53",
+        "7.25.53",
+        "8.12.54",
+        "8.28.54",
+        "8.30.54"
+      ]
+    },
+    "options": []
+  },
+  {
     "name": "Return YouTube Username",
     "description": "Adds an option to replace YouTube handles with usernames in comments using YouTube Data API v3.",
-    "use": false,
+    "use": true,
+    "dependencies": [
+      "BytecodePatch",
+      "Settings for YouTube"
+    ],
+    "compatiblePackages": {
+      "com.google.android.youtube": [
+        "19.05.36",
+        "19.16.39",
+        "19.43.41",
+        "19.44.39",
+        "19.47.53",
+        "20.05.46"
+      ]
+    },
+    "options": []
+  },
+  {
+    "name": "Return YouTube Username",
+    "description": "Adds an option to replace YouTube handles with usernames in comments using YouTube Data API v3.",
+    "use": true,
     "dependencies": [
       "BytecodePatch",
       "Settings for YouTube Music",
@@ -2514,9 +2785,21 @@
     "options": []
   },
   {
-    "name": "Return YouTube Username",
-    "description": "Adds an option to replace YouTube handles with usernames in comments using YouTube Data API v3.",
-    "use": false,
+    "name": "Sanitize sharing links",
+    "description": "Removes the tracking query parameters from links before they are shared.",
+    "use": true,
+    "dependencies": [],
+    "compatiblePackages": {
+      "com.spotify.music": [
+        "9.0.90.1229"
+      ]
+    },
+    "options": []
+  },
+  {
+    "name": "Sanitize sharing links",
+    "description": "Adds an option to sanitize sharing links by removing tracking query parameters.",
+    "use": true,
     "dependencies": [
       "BytecodePatch",
       "Settings for YouTube"
@@ -2574,26 +2857,6 @@
     "options": []
   },
   {
-    "name": "Sanitize sharing links",
-    "description": "Adds an option to sanitize sharing links by removing tracking query parameters.",
-    "use": true,
-    "dependencies": [
-      "BytecodePatch",
-      "Settings for YouTube"
-    ],
-    "compatiblePackages": {
-      "com.google.android.youtube": [
-        "19.05.36",
-        "19.16.39",
-        "19.43.41",
-        "19.44.39",
-        "19.47.53",
-        "20.05.46"
-      ]
-    },
-    "options": []
-  },
-  {
     "name": "Seekbar components",
     "description": "Adds options to hide or change components related to the seekbar.",
     "use": true,
@@ -2643,6 +2906,7 @@
     "description": "Applies mandatory patches to implement ReVanced Extended settings into the application.",
     "use": true,
     "dependencies": [
+      "BytecodePatch",
       "BytecodePatch",
       "BytecodePatch"
     ],
@@ -2797,6 +3061,7 @@
     "use": true,
     "dependencies": [
       "Settings for YouTube",
+      "ResourcePatch",
       "BytecodePatch",
       "BytecodePatch",
       "BytecodePatch",
@@ -2918,6 +3183,40 @@
   },
   {
     "name": "SponsorBlock",
+    "description": "Adds options to enable and configure SponsorBlock, which can skip undesired video segments, such as sponsored content.",
+    "use": true,
+    "dependencies": [
+      "BytecodePatch",
+      "BytecodePatch",
+      "Settings for YouTube"
+    ],
+    "compatiblePackages": {
+      "com.google.android.youtube": [
+        "19.05.36",
+        "19.16.39",
+        "19.43.41",
+        "19.44.39",
+        "19.47.53",
+        "20.05.46"
+      ]
+    },
+    "options": [
+      {
+        "key": "NewSegmentAlignment",
+        "title": "New segment alignment",
+        "description": "Align new segment window.",
+        "required": true,
+        "type": "kotlin.String",
+        "default": "right",
+        "values": {
+          "Right": "right",
+          "Left": "left"
+        }
+      }
+    ]
+  },
+  {
+    "name": "SponsorBlock",
     "description": "Adds options to enable and configure SponsorBlock, which can skip undesired video segments, such as non-music sections.",
     "use": true,
     "dependencies": [
@@ -2935,27 +3234,6 @@
         "8.12.54",
         "8.28.54",
         "8.30.54"
-      ]
-    },
-    "options": []
-  },
-  {
-    "name": "SponsorBlock",
-    "description": "Adds options to enable and configure SponsorBlock, which can skip undesired video segments, such as sponsored content.",
-    "use": true,
-    "dependencies": [
-      "BytecodePatch",
-      "BytecodePatch",
-      "Settings for YouTube"
-    ],
-    "compatiblePackages": {
-      "com.google.android.youtube": [
-        "19.05.36",
-        "19.16.39",
-        "19.43.41",
-        "19.44.39",
-        "19.47.53",
-        "20.05.46"
       ]
     },
     "options": []
@@ -3012,6 +3290,55 @@
     "options": []
   },
   {
+    "name": "Spoof signature",
+    "description": "Spoofs the signature of the app.",
+    "use": false,
+    "dependencies": [
+      "BytecodePatch"
+    ],
+    "compatiblePackages": null,
+    "options": [
+      {
+        "key": "packageName",
+        "title": "Package name",
+        "description": "Package name.",
+        "required": false,
+        "type": "kotlin.String",
+        "default": "",
+        "values": null
+      },
+      {
+        "key": "certificateData",
+        "title": "Certificate data",
+        "description": "Base64-encoded string of the certificate.",
+        "required": false,
+        "type": "kotlin.String",
+        "default": "",
+        "values": null
+      }
+    ]
+  },
+  {
+    "name": "Spoof watch history",
+    "description": "Adds an option to change the domain of the watch history or check its status.",
+    "use": true,
+    "dependencies": [
+      "Settings for YouTube",
+      "BytecodePatch"
+    ],
+    "compatiblePackages": {
+      "com.google.android.youtube": [
+        "19.05.36",
+        "19.16.39",
+        "19.43.41",
+        "19.44.39",
+        "19.47.53",
+        "20.05.46"
+      ]
+    },
+    "options": []
+  },
+  {
     "name": "Swipe controls",
     "description": "Adds options for controlling volume and brightness with swiping, and whether to enter fullscreen when swiping down below the player.",
     "use": true,
@@ -3038,7 +3365,7 @@
   {
     "name": "Theme",
     "description": "Changes the app\u0027s themes to the values specified in patch options.",
-    "use": true,
+    "use": false,
     "dependencies": [
       "ResourcePatch",
       "Settings for YouTube"
@@ -3088,7 +3415,10 @@
           "Light Green": "#FFCCFFCC",
           "Light Yellow": "#FFFDFFCC",
           "Light Orange": "#FFFFE6CC",
-          "Light Red": "#FFFFD6D6"
+          "Light Red": "#FFFFD6D6",
+          "Pale Blue": "#FFD4FFF8",
+          "Pale Green": "#FFD1FFCC",
+          "Pale Yellow": "#FFFFE9AA"
         }
       }
     ]
@@ -3117,10 +3447,56 @@
     "options": []
   },
   {
+    "name": "Translations for Reddit",
+    "description": "Add translations for RVX settings.",
+    "use": true,
+    "dependencies": [
+      "BytecodePatch",
+      "Settings for Reddit"
+    ],
+    "compatiblePackages": {
+      "com.reddit.frontpage": [
+        "2024.17.0",
+        "2025.05.1",
+        "2025.12.1"
+      ]
+    },
+    "options": [
+      {
+        "key": "customTranslations",
+        "title": "Custom translations",
+        "description": "The path to the \u0027strings.xml\u0027 file.\nPlease note that applying the \u0027strings.xml\u0027 file will overwrite all existing translations.",
+        "required": true,
+        "type": "kotlin.String",
+        "default": "",
+        "values": null
+      },
+      {
+        "key": "selectedTranslations",
+        "title": "Translations to add",
+        "description": "A list of translations to be added for the RVX settings, separated by commas.",
+        "required": true,
+        "type": "kotlin.String",
+        "default": "ar, az-rAZ, bg-rBG, da-rDK, de-rDE, el-rGR, es-rES, fil-rPH, fr-rFR, hu-rHU, id-rID, in, it-rIT, iw-rIL, ja-rJP, ko-rKR, pl-rPL, pt-rBR, ru-rRU, tr-rTR, uk-rUA, vi-rVN, zh-rCN, zh-rTW",
+        "values": null
+      },
+      {
+        "key": "selectedStringResources",
+        "title": "String resources to keep",
+        "description": "A list of string resources to be kept, separated by commas.\nString resources not in the list will be removed from the app.\n\nDefault string resource, English, is not removed.",
+        "required": true,
+        "type": "kotlin.String",
+        "default": "af, am, ar, ar-rXB, as, az, b+es+419, b+sr+Latn, be, bg, bn, bs, ca, cs, da, de, el, en-rAU, en-rCA, en-rGB, en-rIN, en-rXA, en-rXC, es, es-rUS, et, eu, fa, fi, fil-rPH, fr, fr-rCA, gl, gu, hi, hr, hu, hy, id, in, is, it, iw, ja, ka, kk, km, kn, ko, ky, lo, lt, lv, mk, ml, mn, mr, ms, my, nb, ne, nl, no, or, pa, pl, pt, pt-rBR, pt-rPT, ro, ru, si, sk, sl, sq, sr, sv, sw, ta, te, th, tl, tr, uk, ur, uz, vi, zh, zh-rCN, zh-rHK, zh-rTW, zu",
+        "values": null
+      }
+    ]
+  },
+  {
     "name": "Translations for YouTube",
     "description": "Add translations or remove string resources.",
     "use": true,
     "dependencies": [
+      "BytecodePatch",
       "Settings for YouTube"
     ],
     "compatiblePackages": {
@@ -3149,7 +3525,7 @@
         "description": "A list of translations to be added for the RVX settings, separated by commas.",
         "required": true,
         "type": "kotlin.String",
-        "default": "ar, bg-rBG, de-rDE, el-rGR, es-rES, fr-rFR, hu-rHU, id-rID, in, it-rIT, ja-rJP, ko-rKR, pl-rPL, pt-rBR, ru-rRU, tr-rTR, uk-rUA, vi-rVN, zh-rCN, zh-rTW",
+        "default": "ar, az-rAZ, be-rBY, bg-rBG, cs-rCZ, da-rDK, de-rDE, el-rGR, en-rGB, en-rUS, es-rES, es-rUS, fa-rIR, fil-rPH, fr-rFR, ga-rIE, hu-rHU, id-rID, in, it-rIT, iw-rIL, ja-rJP, ko-rKR, lo-rLA, my-rMM, nl-rNL, pa-rIN, pl-rPL, pt-rBR, ru-rRU, sk-rSK, sv-rSE, ta-rIN, tr-rTR, uk-rUA, ur-rPK, uz-rUZ, vi-rVN, zh-rCN, zh-rTW",
         "values": null
       },
       {
@@ -3158,7 +3534,7 @@
         "description": "A list of string resources to be kept, separated by commas.\nString resources not in the list will be removed from the app.\n\nDefault string resource, English, is not removed.",
         "required": true,
         "type": "kotlin.String",
-        "default": "af, am, ar, ar-rXB, as, az, b+es+419, b+sr+Latn, be, bg, bn, bs, ca, cs, da, de, el, en-rAU, en-rCA, en-rGB, en-rIN, en-rXA, en-rXC, es, es-rUS, et, eu, fa, fi, fr, fr-rCA, gl, gu, hi, hr, hu, hy, id, in, is, it, iw, ja, ka, kk, km, kn, ko, ky, lo, lt, lv, mk, ml, mn, mr, ms, my, nb, ne, nl, no, or, pa, pl, pt, pt-rBR, pt-rPT, ro, ru, si, sk, sl, sq, sr, sv, sw, ta, te, th, tl, tr, uk, ur, uz, vi, zh, zh-rCN, zh-rHK, zh-rTW, zu",
+        "default": "af, am, ar, ar-rXB, as, az, b+es+419, b+sr+Latn, be, bg, bn, bs, ca, cs, da, de, el, en-rAU, en-rCA, en-rGB, en-rIN, en-rXA, en-rXC, es, es-rUS, et, eu, fa, fi, fil-rPH, fr, fr-rCA, gl, gu, hi, hr, hu, hy, id, in, is, it, iw, ja, ka, kk, km, kn, ko, ky, lo, lt, lv, mk, ml, mn, mr, ms, my, nb, ne, nl, no, or, pa, pl, pt, pt-rBR, pt-rPT, ro, ru, si, sk, sl, sq, sr, sv, sw, ta, te, th, tl, tr, uk, ur, uz, vi, zh, zh-rCN, zh-rHK, zh-rTW, zu",
         "values": null
       }
     ]
@@ -3168,6 +3544,7 @@
     "description": "Add translations or remove string resources.",
     "use": true,
     "dependencies": [
+      "BytecodePatch",
       "Settings for YouTube Music"
     ],
     "compatiblePackages": {
@@ -3199,7 +3576,7 @@
         "description": "A list of translations to be added for the RVX settings, separated by commas.",
         "required": true,
         "type": "kotlin.String",
-        "default": "el-rGR, es-rES, fr-rFR, hu-rHU, id-rID, in, it-rIT, ja-rJP, ko-rKR, pl-rPL, pt-rBR, ru-rRU, tr-rTR, uk-rUA, vi-rVN, zh-rCN, zh-rTW",
+        "default": "bg-rBG, bn, cs-rCZ, el-rGR, es-rES, fr-rFR, hu-rHU, id-rID, in, it-rIT, ja-rJP, ko-rKR, nl-rNL, pl-rPL, pt-rBR, ro-rRO, ru-rRU, ta-rIN, tr-rTR, uk-rUA, vi-rVN, zh-rCN, zh-rTW",
         "values": null
       },
       {
@@ -3208,35 +3585,36 @@
         "description": "A list of string resources to be kept, separated by commas.\nString resources not in the list will be removed from the app.\n\nDefault string resource, English, is not removed.",
         "required": true,
         "type": "kotlin.String",
-        "default": "af, am, ar, ar-rXB, as, az, b+es+419, b+sr+Latn, be, bg, bn, bs, ca, cs, da, de, el, en-rAU, en-rCA, en-rGB, en-rIN, en-rXA, en-rXC, es, es-rUS, et, eu, fa, fi, fr, fr-rCA, gl, gu, hi, hr, hu, hy, id, in, is, it, iw, ja, ka, kk, km, kn, ko, ky, lo, lt, lv, mk, ml, mn, mr, ms, my, nb, ne, nl, no, or, pa, pl, pt, pt-rBR, pt-rPT, ro, ru, si, sk, sl, sq, sr, sv, sw, ta, te, th, tl, tr, uk, ur, uz, vi, zh, zh-rCN, zh-rHK, zh-rTW, zu",
+        "default": "af, am, ar, ar-rXB, as, az, b+es+419, b+sr+Latn, be, bg, bn, bs, ca, cs, da, de, el, en-rAU, en-rCA, en-rGB, en-rIN, en-rXA, en-rXC, es, es-rUS, et, eu, fa, fi, fil-rPH, fr, fr-rCA, gl, gu, hi, hr, hu, hy, id, in, is, it, iw, ja, ka, kk, km, kn, ko, ky, lo, lt, lv, mk, ml, mn, mr, ms, my, nb, ne, nl, no, or, pa, pl, pt, pt-rBR, pt-rPT, ro, ru, si, sk, sl, sq, sr, sv, sw, ta, te, th, tl, tr, uk, ur, uz, vi, zh, zh-rCN, zh-rHK, zh-rTW, zu",
         "values": null
       }
     ]
   },
   {
-    "name": "Video playback",
-    "description": "Adds options to customize settings related to video playback, such as default video quality and playback speed.",
+    "name": "Unlock Premium",
+    "description": "Unlocks Spotify Premium features. Server-sided features like downloading songs are still locked.",
     "use": true,
     "dependencies": [
-      "Settings for YouTube Music",
-      "ResourcePatch",
-      "BytecodePatch",
-      "BytecodePatch",
-      "BytecodePatch",
-      "ResourcePatch",
       "BytecodePatch"
     ],
     "compatiblePackages": {
-      "com.google.android.apps.youtube.music": [
-        "6.20.51",
-        "6.29.59",
-        "6.42.55",
-        "6.51.53",
-        "7.16.53",
-        "7.25.53",
-        "8.12.54",
-        "8.28.54",
-        "8.30.54"
+      "com.spotify.music": [
+        "9.0.90.1229"
+      ]
+    },
+    "options": []
+  },
+  {
+    "name": "Unlock Premium",
+    "description": "Unlocks NetWall Premium features once \u0027Unlock Premium Now\u0027 button is clicked.",
+    "use": true,
+    "dependencies": [
+      "BytecodePatch",
+      "RawResourcePatch"
+    ],
+    "compatiblePackages": {
+      "com.ysy.app.firewall": [
+        "1.3.4"
       ]
     },
     "options": []
@@ -3271,6 +3649,34 @@
         "19.44.39",
         "19.47.53",
         "20.05.46"
+      ]
+    },
+    "options": []
+  },
+  {
+    "name": "Video playback",
+    "description": "Adds options to customize settings related to video playback, such as default video quality and playback speed.",
+    "use": true,
+    "dependencies": [
+      "Settings for YouTube Music",
+      "ResourcePatch",
+      "BytecodePatch",
+      "BytecodePatch",
+      "BytecodePatch",
+      "ResourcePatch",
+      "BytecodePatch"
+    ],
+    "compatiblePackages": {
+      "com.google.android.apps.youtube.music": [
+        "6.20.51",
+        "6.29.59",
+        "6.42.55",
+        "6.51.53",
+        "7.16.53",
+        "7.25.53",
+        "8.12.54",
+        "8.28.54",
+        "8.30.54"
       ]
     },
     "options": []
@@ -3304,11 +3710,11 @@
           "Custom branding icon": "custom_branding_icon",
           "Extension": "extension",
           "Gear": "gear",
+          "YT alt": "yt_alt",
           "ReVanced": "revanced",
           "ReVanced Colored": "revanced_colored",
           "RVX Letters": "rvx_letters",
-          "RVX Letters Bold": "rvx_letters_bold",
-          "YT alt": "yt_alt"
+          "RVX Letters Bold": "rvx_letters_bold"
         }
       },
       {
@@ -3317,7 +3723,7 @@
         "description": "Whether to apply Visual preferences icons to all settings menus.\n\nIf true: icons are applied to the parent PreferenceScreen of YouTube settings, the parent PreferenceScreen of RVX settings and the RVX sub-settings (if supported).\n\nIf false: icons are applied only to the parent PreferenceScreen of YouTube settings and RVX settings.",
         "required": true,
         "type": "kotlin.Boolean",
-        "default": false,
+        "default": true,
         "values": null
       }
     ]
@@ -3354,12 +3760,21 @@
           "Custom branding icon": "custom_branding_icon",
           "Extension": "extension",
           "Gear": "gear",
+          "YT alt": "yt_alt",
           "ReVanced": "revanced",
           "ReVanced Colored": "revanced_colored",
           "RVX Letters": "rvx_letters",
-          "RVX Letters Bold": "rvx_letters_bold",
-          "YT alt": "yt_alt"
+          "RVX Letters Bold": "rvx_letters_bold"
         }
+      },
+      {
+        "key": "applyToAll",
+        "title": "Apply to all settings menu",
+        "description": "Whether to apply Visual preferences icons to all settings menus.\n\nIf true: icons are applied to the parent PreferenceScreen of YouTube settings, the parent PreferenceScreen of RVX settings and the RVX sub-settings (if supported).\n\nIf false: icons are applied only to the parent PreferenceScreen of YouTube settings and RVX settings.",
+        "required": true,
+        "type": "kotlin.Boolean",
+        "default": true,
+        "values": null
       }
     ]
   },
@@ -3382,26 +3797,6 @@
         "8.12.54",
         "8.28.54",
         "8.30.54"
-      ]
-    },
-    "options": []
-  },
-  {
-    "name": "Watch history",
-    "description": "Adds an option to change the domain of the watch history or check its status.",
-    "use": true,
-    "dependencies": [
-      "Settings for YouTube",
-      "BytecodePatch"
-    ],
-    "compatiblePackages": {
-      "com.google.android.youtube": [
-        "19.05.36",
-        "19.16.39",
-        "19.43.41",
-        "19.44.39",
-        "19.47.53",
-        "20.05.46"
       ]
     },
     "options": []

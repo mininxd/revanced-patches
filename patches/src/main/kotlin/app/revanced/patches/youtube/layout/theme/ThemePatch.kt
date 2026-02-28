@@ -14,6 +14,7 @@ import org.w3c.dom.Element
 val themePatch = resourcePatch(
     THEME.title,
     THEME.summary,
+    false,
 ) {
     compatibleWith(COMPATIBLE_PACKAGE)
 
@@ -46,6 +47,9 @@ val themePatch = resourcePatch(
         "Light Yellow" to "#FFFDFFCC",
         "Light Orange" to "#FFFFE6CC",
         "Light Red" to "#FFFFD6D6",
+        "Pale Blue" to "#FFD4FFF8",
+        "Pale Green" to "#FFD1FFCC",
+        "Pale Yellow" to "#FFFFE9AA",
     )
 
     val darkThemeBackgroundColor = stringOption(

@@ -11,6 +11,8 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.File
 import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 private val classLoader = object {}.javaClass.classLoader
 
@@ -308,6 +310,78 @@ fun ResourcePatchContext.copyResources(
                     inputStream,
                     resourceDirectory.resolve(resourceFile),
                 )
+            }
+        }
+    }
+}
+
+/**
+ * Copy resources from the current class loader to the resource directory with the option to rename.
+ *
+ * @param sourceResourceDirectory The source resource directory name.
+ * @param resourceMap The map containing resource titles and their respective path data.
+ */
+fun ResourcePatchContext.copyResourcesWithRename(
+    sourceResourceDirectory: String,
+    resourceMap: Map<String, String>
+) {
+    val targetResourceDirectory = this["res"]
+
+    for ((title, pathData) in resourceMap) {
+        // Check if pathData is another title
+        if (resourceMap.containsKey(pathData)) {
+            continue // Skip copying if the pathData is another title
+        }
+
+        val resourceFile = "drawable/icon.xml"
+        val inputStream = inputStreamFromBundledResource(sourceResourceDirectory, resourceFile)!!
+        val targetFile = targetResourceDirectory.resolve("drawable/$title.xml").toPath()
+
+        Files.copy(inputStream, targetFile, StandardCopyOption.REPLACE_EXISTING)
+
+        // Update the XML with the new path data
+        document(targetFile.toString()).use { document ->
+            updatePathData(document, pathData)
+        }
+    }
+}
+
+/**
+ * Update the `android:pathData` attribute in the XML document.
+ *
+ * @param document The XML document.
+ * @param pathData The new path data to set.
+ */
+fun updatePathData(document: org.w3c.dom.Document, pathData: String) {
+    val elements = document.getElementsByTagName("path")
+    for (i in 0 until elements.length) {
+        val pathElement = elements.item(i) as? Element
+        pathElement?.setAttribute("android:pathData", pathData)
+    }
+}
+
+/**
+ * Delete resources from the resource directory.
+ *
+ * @param resources The resources to delete.
+ */
+fun ResourcePatchContext.removeResources(
+    vararg resources: ResourceGroup,
+    createDirectoryIfNotExist: Boolean = false,
+) {
+    val resourceDirectory = get("res")
+
+    for (resourceGroup in resources) {
+        resourceGroup.resources.forEach { resource ->
+            val resourceDirectoryName = resourceGroup.resourceDirectoryName
+            if (createDirectoryIfNotExist) {
+                val targetDirectory = resourceDirectory.resolve(resourceDirectoryName)
+                if (!targetDirectory.isDirectory) Files.createDirectories(targetDirectory.toPath())
+            }
+            val resourceFile = "$resourceDirectoryName/$resource"
+            val targetFile = resourceDirectory.resolve(resourceFile)
+            if(targetFile.exists()) {
+                Files.delete(targetFile.toPath())
             }
         }
     }

@@ -41,10 +41,9 @@ import app.revanced.patches.youtube.utils.settings.ResourceUtils.restoreOldSplas
 import app.revanced.patches.youtube.utils.settings.settingsPatch
 import app.revanced.patches.youtube.utils.totalTimeFingerprint
 import app.revanced.patches.youtube.video.information.videoInformationPatch
+import app.revanced.util.*
 import app.revanced.util.Utils.printWarn
-import app.revanced.util.copyXmlNode
 import app.revanced.util.findElementByAttributeValueOrThrow
-import app.revanced.util.findMethodsOrThrow
 import app.revanced.util.fingerprint.injectLiteralInstructionBooleanCall
 import app.revanced.util.fingerprint.matchOrThrow
 import app.revanced.util.fingerprint.methodOrThrow
@@ -54,12 +53,8 @@ import app.revanced.util.getWalkerMethod
 import app.revanced.util.indexOfFirstInstructionOrThrow
 import app.revanced.util.indexOfFirstLiteralInstructionOrThrow
 import app.revanced.util.inputStreamFromBundledResource
-import app.revanced.util.updatePatchStatus
 import com.android.tools.smali.dexlib2.Opcode
-import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.*
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import org.w3c.dom.Element
 import java.io.ByteArrayInputStream
@@ -345,6 +340,55 @@ val seekbarComponentsPatch = bytecodePatch(
                 }
             }
 
+            // Adjust gradient seekbar bounds / positions
+            val boundsFingerprint =
+                if (is_19_49_or_greater) {
+                    playerLinearGradientFingerprint
+                } else {
+                    setBoundsFingerprint
+                }
+
+            boundsFingerprint.methodOrThrow().apply {
+                val fillArrayDataIndices = findInstructionIndicesReversedOrThrow(Opcode.FILL_ARRAY_DATA)
+
+                if (fillArrayDataIndices.isEmpty()) {
+                    throw PatchException("No FILL_ARRAY_DATA instructions found in method: ${this.name}")
+                }
+
+                for (fillArrayIndex in fillArrayDataIndices) {
+                    val newArrayIndex = indexOfFirstInstructionReversedOrThrow(fillArrayIndex, Opcode.NEW_ARRAY)
+
+                    val arrayRegister = getInstruction<OneRegisterInstruction>(newArrayIndex).registerA
+
+                    val smaliInstruction = """
+                        invoke-static/range { v$arrayRegister }, $EXTENSION_SEEKBAR_COLOR_CLASS_DESCRIPTOR->setSeekbarGradientPositions([F)V
+                    """.trimIndent()
+
+                    addInstruction(fillArrayIndex + 1, smaliInstruction)
+                }
+            }
+
+            // Set seekbar thumb color
+            seekbarThumbFingerprint.methodOrThrow().apply {
+                val instructions = implementation!!.instructions.toList()
+
+                val lastMoveResultIndex = instructions.indexOfLast { it.opcode == Opcode.MOVE_RESULT }
+
+                if (lastMoveResultIndex == -1) {
+                    throw PatchException("Could not find the last move-result instruction")
+                }
+
+                val resultRegister = (instructions[lastMoveResultIndex] as? OneRegisterInstruction)?.registerA
+                    ?: throw PatchException("Could not get the register used in the last move-result instruction")
+
+                val smaliInstruction = """
+                    invoke-static {}, $EXTENSION_SEEKBAR_COLOR_CLASS_DESCRIPTOR->setSeekbarThumbColor()I
+                    move-result v$resultRegister
+                """.trimIndent()
+
+                addInstructions(lastMoveResultIndex + 1, smaliInstruction)
+            }
+
             settingArray += "SETTINGS: CUSTOM_SEEKBAR_COLOR_ACCENT"
 
             if (!restoreOldSplashAnimationIncluded) {
@@ -377,7 +421,7 @@ val seekbarComponentsPatch = bytecodePatch(
                 }
             }
 
-            // Hook the splash animation drawable to set the a seekbar color theme.
+            // Hook the splash animation drawable to set the seekbar color theme.
             onCreateMethod.apply {
                 val drawableIndex = indexOfFirstInstructionOrThrow {
                     val reference = getReference<MethodReference>()
@@ -460,13 +504,17 @@ val seekbarComponentsPatch = bytecodePatch(
                 }
             }
 
-            setSplashDrawablePathFillColor(
-                listOf(
-                    "res/drawable/\$startup_animation_light__0.xml",
-                    "res/drawable/\$startup_animation_dark__0.xml"
-                ),
-                "_R_G_L_10_G_D_0_P_0"
-            )
+            try {
+                setSplashDrawablePathFillColor(
+                    listOf(
+                        "res/drawable/\$startup_animation_light__0.xml",
+                        "res/drawable/\$startup_animation_dark__0.xml"
+                    ),
+                    "_R_G_L_10_G_D_0_P_0"
+                )
+            } catch (_: Exception) {
+                // Do nothing
+            }
 
             if (!is_19_46_or_greater) {
                 // Resources removed in 19.46+

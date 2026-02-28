@@ -312,6 +312,15 @@ internal fun Method.findFieldFromToString(fieldName: String): FieldReference {
 }
 
 /**
+ * Adds public [AccessFlags] and removes private and protected flags (if present).
+ */
+internal fun Int.toPublicAccessFlags(): Int {
+    return this.or(AccessFlags.PUBLIC.value)
+        .and(AccessFlags.PROTECTED.value.inv())
+        .and(AccessFlags.PRIVATE.value.inv())
+}
+
+/**
  * Find the [MutableMethod] from a given [Method] in a [MutableClass].
  *
  * @param method The [Method] to find.
@@ -461,6 +470,49 @@ fun Method.indexOfFirstLiteralInstructionOrThrow(literal: Long): Int {
     return index
 }
 
+
+/**
+ * Find the index of the first literal instruction with the given float value.
+ *
+ * @return the first literal instruction with the value, or -1 if not found.
+ * @see indexOfFirstLiteralInstructionOrThrow
+ */
+fun Method.indexOfFirstLiteralInstruction(literal: Float) =
+    indexOfFirstLiteralInstruction(literal.toRawBits().toLong())
+
+/**
+ * Find the index of the first literal instruction with the given float value,
+ * or throw an exception if not found.
+ *
+ * @return the first literal instruction with the value, or throws [PatchException] if not found.
+ */
+fun Method.indexOfFirstLiteralInstructionOrThrow(literal: Float): Int {
+    val index = indexOfFirstLiteralInstruction(literal)
+    if (index < 0) throw PatchException("Could not find float literal: $literal")
+    return index
+}
+
+/**
+ * Find the index of the first literal instruction with the given double value.
+ *
+ * @return the first literal instruction with the value, or -1 if not found.
+ * @see indexOfFirstLiteralInstructionOrThrow
+ */
+fun Method.indexOfFirstLiteralInstruction(literal: Double) =
+    indexOfFirstLiteralInstruction(literal.toRawBits().toLong())
+
+/**
+ * Find the index of the first literal instruction with the given double value,
+ * or throw an exception if not found.
+ *
+ * @return the first literal instruction with the value, or throws [PatchException] if not found.
+ */
+fun Method.indexOfFirstLiteralInstructionOrThrow(literal: Double): Int {
+    val index = indexOfFirstLiteralInstruction(literal)
+    if (index < 0) throw PatchException("Could not find double literal: $literal")
+    return index
+}
+
 /**
  * Find the index of the last literal instruction with the given value.
  *
@@ -510,6 +562,21 @@ fun Method.indexOfFirstStringInstructionOrThrow(str: String): Int {
  */
 fun Method.containsLiteralInstruction(literal: Long) =
     indexOfFirstLiteralInstruction(literal) >= 0
+
+
+/**
+ * Check if the method contains a literal with the given float value.
+ *
+ * @return if the method contains a literal with the given value.
+ */
+fun Method.containsLiteralInstruction(literal: Float) = indexOfFirstLiteralInstruction(literal) >= 0
+
+/**
+ * Check if the method contains a literal with the given double value.
+ *
+ * @return if the method contains a literal with the given value.
+ */
+fun Method.containsLiteralInstruction(literal: Double) = indexOfFirstLiteralInstruction(literal) >= 0
 
 fun BytecodePatchContext.hookClassHierarchy(
     hostActivityClass: MutableClass,

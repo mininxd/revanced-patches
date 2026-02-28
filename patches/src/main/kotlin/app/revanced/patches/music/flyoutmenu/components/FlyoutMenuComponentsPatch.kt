@@ -243,6 +243,11 @@ val flyoutMenuComponentsPatch = bytecodePatch(
 
         addLithoFilter(FILTER_CLASS_DESCRIPTOR)
 
+        addSwitchPreference(
+            CategoryType.FLYOUT,
+            "revanced_enable_compact_dialog",
+            "false"
+        )
         if (trimSilenceIncluded) {
             addSwitchPreference(
                 CategoryType.FLYOUT,
@@ -250,17 +255,6 @@ val flyoutMenuComponentsPatch = bytecodePatch(
                 "true"
             )
         }
-        addSwitchPreference(
-            CategoryType.FLYOUT,
-            "revanced_enable_compact_dialog",
-            "true"
-        )
-        addSwitchPreference(
-            CategoryType.FLYOUT,
-            "revanced_hide_flyout_menu_like_dislike",
-            "false",
-            false
-        )
         if (is_6_36_or_greater) {
             addSwitchPreference(
                 CategoryType.FLYOUT,
@@ -269,6 +263,12 @@ val flyoutMenuComponentsPatch = bytecodePatch(
                 false
             )
         }
+        addSwitchPreference(
+            CategoryType.FLYOUT,
+            "revanced_hide_flyout_menu_like_dislike",
+            "false",
+            false
+        )
         addSwitchPreference(
             CategoryType.FLYOUT,
             "revanced_hide_flyout_menu_add_to_queue",
@@ -349,6 +349,18 @@ val flyoutMenuComponentsPatch = bytecodePatch(
         )
         addSwitchPreference(
             CategoryType.FLYOUT,
+            "revanced_hide_flyout_menu_unpin_from_speed_dial",
+            "false",
+            false
+        )
+        addSwitchPreference(
+            CategoryType.FLYOUT,
+            "revanced_hide_flyout_menu_taste_match",
+            "false",
+            false
+        )
+        addSwitchPreference(
+            CategoryType.FLYOUT,
             "revanced_hide_flyout_menu_play_next",
             "false",
             false
@@ -422,18 +434,6 @@ val flyoutMenuComponentsPatch = bytecodePatch(
         addSwitchPreference(
             CategoryType.FLYOUT,
             "revanced_hide_flyout_menu_subscribe",
-            "false",
-            false
-        )
-        addSwitchPreference(
-            CategoryType.FLYOUT,
-            "revanced_hide_flyout_menu_taste_match",
-            "false",
-            false
-        )
-        addSwitchPreference(
-            CategoryType.FLYOUT,
-            "revanced_hide_flyout_menu_unpin_from_speed_dial",
             "false",
             false
         )

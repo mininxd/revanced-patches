@@ -96,8 +96,8 @@ fun indexOfClientInfoInstruction(method: Method) =
                 getReference<FieldReference>()?.type == CLIENT_INFO_CLASS_DESCRIPTOR
     }
 
-internal val conversionContextFingerprintToString = legacyFingerprint(
-    name = "conversionContextFingerprintToString",
+internal val conversionContextFingerprintToString2 = legacyFingerprint(
+    name = "conversionContextFingerprintToString2",
     parameters = emptyList(),
     strings = listOf(
         // YTM 6.20: "ConversionContext{container="

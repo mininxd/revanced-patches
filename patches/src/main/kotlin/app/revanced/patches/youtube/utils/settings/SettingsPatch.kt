@@ -1,13 +1,14 @@
 package app.revanced.patches.youtube.utils.settings
 
 import app.revanced.patcher.extensions.InstructionExtensions.addInstruction
-import app.revanced.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
+import app.revanced.patcher.extensions.InstructionExtensions.addInstructions
 import app.revanced.patcher.extensions.InstructionExtensions.getInstruction
 import app.revanced.patcher.patch.BytecodePatchContext
 import app.revanced.patcher.patch.bytecodePatch
 import app.revanced.patcher.patch.resourcePatch
 import app.revanced.patcher.patch.stringOption
 import app.revanced.patcher.util.proxy.mutableTypes.MutableMethod
+import app.revanced.patcher.util.proxy.mutableTypes.MutableMethod.Companion.toMutable
 import app.revanced.patches.shared.extension.Constants.EXTENSION_THEME_UTILS_CLASS_DESCRIPTOR
 import app.revanced.patches.shared.extension.Constants.EXTENSION_UTILS_CLASS_DESCRIPTOR
 import app.revanced.patches.shared.mainactivity.injectConstructorMethodCall
@@ -15,7 +16,6 @@ import app.revanced.patches.shared.mainactivity.injectOnCreateMethodCall
 import app.revanced.patches.shared.settings.baseSettingsPatch
 import app.revanced.patches.youtube.utils.cairoFragmentConfigFingerprint
 import app.revanced.patches.youtube.utils.compatibility.Constants.COMPATIBLE_PACKAGE
-import app.revanced.patches.youtube.utils.extension.Constants.PATCH_STATUS_CLASS_DESCRIPTOR
 import app.revanced.patches.youtube.utils.extension.Constants.UTILS_PATH
 import app.revanced.patches.youtube.utils.extension.sharedExtensionPatch
 import app.revanced.patches.youtube.utils.fix.attributes.themeAttributesPatch
@@ -23,7 +23,6 @@ import app.revanced.patches.youtube.utils.fix.playbackspeed.playbackSpeedWhilePl
 import app.revanced.patches.youtube.utils.fix.splash.darkModeSplashScreenPatch
 import app.revanced.patches.youtube.utils.mainactivity.mainActivityResolvePatch
 import app.revanced.patches.youtube.utils.patch.PatchList.SETTINGS_FOR_YOUTUBE
-import app.revanced.patches.youtube.utils.playservice.is_19_16_or_greater
 import app.revanced.patches.youtube.utils.playservice.is_19_34_or_greater
 import app.revanced.patches.youtube.utils.playservice.versionCheckPatch
 import app.revanced.patches.youtube.utils.resourceid.sharedResourceIdPatch
@@ -33,29 +32,25 @@ import app.revanced.util.FilesCompat
 import app.revanced.util.ResourceGroup
 import app.revanced.util.Utils.printWarn
 import app.revanced.util.addInstructionsAtControlFlowLabel
-import app.revanced.util.className
 import app.revanced.util.copyResources
 import app.revanced.util.copyXmlNode
-import app.revanced.util.findFreeRegister
+import app.revanced.util.findElementByAttributeValueOrThrow
 import app.revanced.util.findInstructionIndicesReversedOrThrow
-import app.revanced.util.findMethodOrThrow
-import app.revanced.util.fingerprint.definingClassOrThrow
 import app.revanced.util.fingerprint.methodCall
 import app.revanced.util.fingerprint.methodOrThrow
-import app.revanced.util.fingerprint.mutableClassOrThrow
 import app.revanced.util.getReference
-import app.revanced.util.hookClassHierarchy
-import app.revanced.util.indexOfFirstInstruction
 import app.revanced.util.indexOfFirstInstructionOrThrow
 import app.revanced.util.insertNode
 import app.revanced.util.removeStringsElements
 import app.revanced.util.returnEarly
 import app.revanced.util.valueOrThrow
+import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
-import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 import com.android.tools.smali.dexlib2.util.MethodUtil
 import org.w3c.dom.Element
 import java.nio.file.Files
@@ -63,12 +58,17 @@ import java.nio.file.Files
 private const val EXTENSION_INITIALIZATION_CLASS_DESCRIPTOR =
     "$UTILS_PATH/InitializationPatch;"
 
+private const val EXTENSION_THEME_METHOD_DESCRIPTOR =
+    "$EXTENSION_THEME_UTILS_CLASS_DESCRIPTOR->updateLightDarkModeStatus(Ljava/lang/Enum;)V"
+
+private const val EXTENSION_CLASS_DESCRIPTOR =
+    "Lapp/revanced/extension/youtube/settings/YouTubeActivityHook;"
+
 private lateinit var bytecodeContext: BytecodePatchContext
 
 internal fun getBytecodeContext() = bytecodeContext
 
 internal var cairoFragmentDisabled = false
-private var targetActivityClassName = ""
 
 private val settingsBytecodePatch = bytecodePatch(
     description = "settingsBytecodePatch"
@@ -134,44 +134,6 @@ private val settingsBytecodePatch = bytecodePatch(
 
         // endregion.
 
-        val hostAbstractActivityClass = baseHostActivityOnCreateFingerprint.mutableClassOrThrow()
-        val hostActivityClass = youtubeHostActivityOnCreateFingerprint.mutableClassOrThrow()
-        val targetActivityClass = licenseMenuActivityOnCreateFingerprint.mutableClassOrThrow()
-
-        hookClassHierarchy(
-            hostActivityClass,
-            targetActivityClass,
-            hostAbstractActivityClass,
-        )
-
-        targetActivityClass.methods.forEach { method ->
-            method.apply {
-                if (!MethodUtil.isConstructor(method) && returnType == "V") {
-                    val insertIndex =
-                        indexOfFirstInstruction(Opcode.INVOKE_SUPER) + 1
-                    if (insertIndex > 0) {
-                        val freeRegister = findFreeRegister(insertIndex)
-
-                        addInstructionsWithLabels(
-                            insertIndex, """
-                                invoke-virtual {p0}, ${hostAbstractActivityClass.type}->isInitialized()Z
-                                move-result v$freeRegister
-                                if-eqz v$freeRegister, :ignore
-                                return-void
-                                :ignore
-                                nop
-                                """
-                        )
-                    }
-                }
-            }
-        }
-
-        targetActivityClassName = targetActivityClass.type.className
-        findMethodOrThrow(PATCH_STATUS_CLASS_DESCRIPTOR) {
-            name == "TargetActivityClass"
-        }.returnEarly(targetActivityClassName)
-
         // apply the current theme of the settings page
         themeSetterSystemFingerprint.methodOrThrow().apply {
             findInstructionIndicesReversedOrThrow(Opcode.RETURN_OBJECT).forEach { index ->
@@ -179,29 +141,8 @@ private val settingsBytecodePatch = bytecodePatch(
 
                 addInstructionsAtControlFlowLabel(
                     index,
-                    "invoke-static { v$register }, $EXTENSION_THEME_UTILS_CLASS_DESCRIPTOR->updateLightDarkModeStatus(Ljava/lang/Enum;)V"
+                    "invoke-static { v$register }, $EXTENSION_THEME_METHOD_DESCRIPTOR"
                 )
-            }
-        }
-
-        if (is_19_16_or_greater) {
-            val userInterfaceThemeEnum = userInterfaceThemeEnumFingerprint
-                .definingClassOrThrow()
-
-            clientContextBodyBuilderFingerprint.methodOrThrow().apply {
-                findInstructionIndicesReversedOrThrow {
-                    val fieldReference = getReference<FieldReference>()
-                    opcode == Opcode.IGET &&
-                            fieldReference?.definingClass == userInterfaceThemeEnum &&
-                            fieldReference.type == "I"
-                }.forEach { index ->
-                    val register = getInstruction<TwoRegisterInstruction>(index).registerA
-
-                    addInstruction(
-                        index + 1,
-                        "invoke-static { v$register }, $EXTENSION_THEME_UTILS_CLASS_DESCRIPTOR->updateLightDarkModeStatus(I)V",
-                    )
-                }
             }
         }
 
@@ -213,6 +154,77 @@ private val settingsBytecodePatch = bytecodePatch(
             EXTENSION_UTILS_CLASS_DESCRIPTOR,
             "setActivity"
         )
+
+        // Modify the license activity and remove all existing layout code.
+        // Must modify an existing activity and cannot add a new activity to the manifest,
+        // as that fails for root installations.
+
+        licenseActivityOnCreateFingerprint.let {
+            val superClass = it.classDef.superclass
+
+            it.method.addInstructions(
+                0,
+                """
+                    # Some targets have extra instructions before the call to super method.
+                    invoke-super { p0, p1 }, $superClass->onCreate(Landroid/os/Bundle;)V
+                    invoke-static { p0 }, $EXTENSION_CLASS_DESCRIPTOR->initialize(Landroid/app/Activity;)V
+                    return-void
+                """
+            )
+        }
+
+        // Remove other methods as they will break as the onCreate method is modified above.
+        licenseActivityOnCreateFingerprint.classDef.apply {
+            methods.removeIf { it.name != "onCreate" && !MethodUtil.isConstructor(it) }
+        }
+
+        // Add onBackPressed to handle system back presses and gestures.
+        licenseActivityOnCreateFingerprint.classDef.apply {
+            // Add attachBaseContext method to override the context for setting a specific language.
+            ImmutableMethod(
+                type,
+                "attachBaseContext",
+                listOf(ImmutableMethodParameter("Landroid/content/Context;", annotations, null)),
+                "V",
+                AccessFlags.PROTECTED.value,
+                null,
+                null,
+                MutableMethodImplementation(3),
+            ).toMutable().apply {
+                addInstructions(
+                    """
+                        invoke-static { p1 }, $EXTENSION_CLASS_DESCRIPTOR->getAttachBaseContext(Landroid/content/Context;)Landroid/content/Context;
+                        move-result-object p1
+                        invoke-super { p0, p1 }, $superclass->attachBaseContext(Landroid/content/Context;)V
+                        return-void
+                    """
+                )
+            }.let(methods::add)
+
+            // Override finish() to intercept back gesture.
+            ImmutableMethod(
+                licenseActivityOnCreateFingerprint.classDef.type,
+                "finish",
+                emptyList(),
+                "V",
+                AccessFlags.PUBLIC.value,
+                null,
+                null,
+                MutableMethodImplementation(3),
+            ).toMutable().apply {
+                addInstructions(
+                    """
+                        invoke-static {}, $EXTENSION_CLASS_DESCRIPTOR->handleBackPress()Z
+                        move-result v0
+                        if-nez v0, :search_handled
+                        invoke-super { p0 }, Landroid/app/Activity;->finish()V
+                        return-void
+                        :search_handled
+                        return-void
+                    """
+                )
+            }.let(methods::add)
+        }
     }
 }
 
@@ -377,7 +389,7 @@ val settingsPatch = resourcePatch(
         ResourceUtils.addPreferenceFragment(
             "revanced_settings",
             insertKey,
-            targetActivityClassName,
+            "com.google.android.libraries.social.licenses.LicenseActivity"
         )
 
         /**
@@ -401,6 +413,24 @@ val settingsPatch = resourcePatch(
                     }
                 }
             }
+        }
+
+        // Modify the manifest and add a data intent filter to the LicenseActivity.
+        // Some devices freak out if undeclared data is passed to an intent,
+        // and this change appears to fix the issue.
+        document("AndroidManifest.xml").use { document ->
+            val licenseElement = document.childNodes.findElementByAttributeValueOrThrow(
+                "android:name",
+                "com.google.android.libraries.social.licenses.LicenseActivity",
+            )
+
+            val mimeType = document.createElement("data")
+            mimeType.setAttribute("android:mimeType", "text/plain")
+
+            val intentFilter = document.createElement("intent-filter")
+            intentFilter.appendChild(mimeType)
+
+            licenseElement.appendChild(intentFilter)
         }
     }
 

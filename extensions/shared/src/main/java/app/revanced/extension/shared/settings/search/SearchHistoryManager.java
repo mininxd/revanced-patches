@@ -35,7 +35,7 @@ public class SearchHistoryManager {
     /**
      * Interface for handling history item selection.
      */
-    private static final int MAX_HISTORY_SIZE = 5;  // Maximum history items stored.
+    private static final int MAX_HISTORY_SIZE = 50;  // Maximum history items stored.
 
     private static final int ID_CLEAR_HISTORY_BUTTON = getIdIdentifier(
             "clear_history_button");

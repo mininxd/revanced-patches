@@ -268,6 +268,63 @@ public class SeekbarColorPatch {
     }
 
     /**
+     * Injection point
+     * <p>
+     * Set seekbar thumb color
+     * The seekbar thumb was initially set to the gradient seekbar's starting color.
+     * But we will switch to using the end color.
+     */
+    public static int setSeekbarThumbColor() {
+        try {
+            return Color.parseColor(Settings.CUSTOM_SEEKBAR_COLOR_ACCENT.get());
+        } catch (Exception ex) {
+            Utils.showToastShort(str("revanced_color_invalid_toast"));
+            Utils.showToastShort(str("revanced_extended_reset_to_default_toast"));
+            Settings.CUSTOM_SEEKBAR_COLOR_ACCENT.resetToDefault();
+            return setSeekbarThumbColor();
+        }
+    }
+
+    /**
+     * Injection point
+     * <p>
+     * Overrides default positions for gradient seekbar
+     */
+    public static void setSeekbarGradientPositions(float[] positions) {
+        try {
+            String[] positionStrings = Settings.GRADIENT_SEEKBAR_POSITIONS.get().split(",");
+
+            // Check if input length matches the expected length
+            if (positionStrings.length != positions.length) {
+                Utils.showToastShort(str("revanced_gradient_seekbar_positions_reset"));
+                Settings.GRADIENT_SEEKBAR_POSITIONS.resetToDefault();
+                return;
+            }
+
+            float[] newPositions = new float[positions.length];
+
+            for (int i = 0; i < positions.length; i++) {
+                float position = Float.parseFloat(positionStrings[i].trim());
+
+                // Ensure positions are in valid range [0.0, 1.0]
+                if (position < 0.0f || position > 1.0f) {
+                    Utils.showToastShort(str("revanced_gradient_seekbar_positions_reset"));
+                    Settings.GRADIENT_SEEKBAR_POSITIONS.resetToDefault();
+                    return;
+                }
+                newPositions[i] = position;
+            }
+
+            // Update positions array if all values are valid
+            System.arraycopy(newPositions, 0, positions, 0, positions.length);
+        } catch (Exception ex) {
+            Utils.showToastShort(str("revanced_gradient_seekbar_positions_reset"));
+            Settings.GRADIENT_SEEKBAR_POSITIONS.resetToDefault();
+            setSeekbarGradientPositions(positions);
+        }
+    }
+
+    /**
      * Injection point.
      * <p>
      * Overrides color when video player seekbar is clicked.

@@ -99,6 +99,10 @@ public final class ActionButtonsFilter extends Filter {
                         Settings.HIDE_STOP_ADS_BUTTON,
                         "yt_outline_slash_circle_left"
                 ),
+                new ByteArrayFilterGroup(
+                        Settings.HIDE_CLIP_BUTTON,
+                        "yt_outline_scissors"
+                ),
                 // 1. YouTube 19.25.39 can be used without the 'Disable update screen' patch.
                 //    This means that even if you use an unpatched YouTube 19.25.39, the 'Update your app' pop-up will not appear.
                 // 2. Due to a server-side change, the Hype button is now available on YouTube 19.25.39 and earlier.
@@ -112,6 +116,10 @@ public final class ActionButtonsFilter extends Filter {
                         IS_19_26_OR_GREATER || Settings.FIX_HYPE_BUTTON_ICON.get()
                                 ? "yt_outline_star_shooting"
                                 : "Hype"
+                ),
+                new ByteArrayFilterGroup(
+                        Settings.HIDE_PROMOTE_BUTTON,
+                        "yt_outline_megaphone"
                 )
         );
     }
