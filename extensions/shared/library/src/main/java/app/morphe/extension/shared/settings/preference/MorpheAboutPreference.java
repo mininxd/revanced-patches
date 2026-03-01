@@ -25,7 +25,7 @@ public class MorpheAboutPreference extends Preference {
 
         TextView titleView = view.findViewById(android.R.id.title);
         if (titleView != null) {
-            String versionText = String.format("Patches version <i>%s</i>", Utils.getPatchesReleaseVersion());
+            String versionText = String.format("Patches version %s", Utils.getPatchesReleaseVersion());
             titleView.setText(Html.fromHtml(versionText));
         }
     }
